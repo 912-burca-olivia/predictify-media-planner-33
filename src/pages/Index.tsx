@@ -12,6 +12,7 @@ const Index = () => {
   // For demo purposes, set to true to bypass login
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [activeView, setActiveView] = useState('simulation');
+  const [isAdvancedMode, setIsAdvancedMode] = useState(true); // Set to true for testing advanced features
 
   // For demo purposes, enable this to redirect to login page
   // if (!isAuthenticated) {
@@ -27,11 +28,11 @@ const Index = () => {
       case 'generate':
         return <GeneratePlanView />;
       case 'simulation':
-        return <SimulationView />;
+        return <SimulationView isAdvancedMode={isAdvancedMode} />;
       case 'library':
         return <LibraryView />;
       default:
-        return <SimulationView />;
+        return <SimulationView isAdvancedMode={isAdvancedMode} />;
     }
   };
 

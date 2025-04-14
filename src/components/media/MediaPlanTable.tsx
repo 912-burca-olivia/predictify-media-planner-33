@@ -2,78 +2,19 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Lock, Unlock, Edit, Download, Save } from 'lucide-react';
+import { Lock, Unlock, Edit, Download, Save, Percent, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import CellEditPopover from './CellEditPopover';
-
-// Sample data structure
-type MediaChannel = {
-  id: string;
-  name: string;
-  locked: boolean;
-};
-
-type MonthData = {
-  id: string;
-  name: string;
-  locked: boolean;
-};
-
-type CellData = {
-  channelId: string;
-  monthId: string;
-  spend: number;
-  locked: boolean;
-};
+import { useMediaPlan } from '@/contexts/MediaPlanContext';
 
 const MediaPlanTable = () => {
-  // Sample data (would come from API/context in a real app)
-  const [channels, setChannels] = useState<MediaChannel[]>([
-    { id: 'tv', name: 'TV', locked: false },
-    { id: 'radio', name: 'Radio', locked: false },
-    { id: 'social', name: 'Social Media', locked: false },
-    { id: 'search', name: 'Search', locked: false },
-    { id: 'display', name: 'Display', locked: false },
-    { id: 'print', name: 'Print', locked: false },
-  ]);
-
-  const [months, setMonths] = useState<MonthData[]>([
-    { id: 'jan', name: 'Jan', locked: false },
-    { id: 'feb', name: 'Feb', locked: false },
-    { id: 'mar', name: 'Mar', locked: false },
-    { id: 'apr', name: 'Apr', locked: false },
-    { id: 'may', name: 'May', locked: false },
-    { id: 'jun', name: 'Jun', locked: false },
-    { id: 'jul', name: 'Jul', locked: false },
-    { id: 'aug', name: 'Aug', locked: false },
-    { id: 'sep', name: 'Sep', locked: false },
-    { id: 'oct', name: 'Oct', locked: false },
-    { id: 'nov', name: 'Nov', locked: false },
-    { id: 'dec', name: 'Dec', locked: false },
-  ]);
-
-  // Generate some sample cell data
-  const generateInitialCellData = (): CellData[] => {
-    const cells: CellData[] = [];
-    channels.forEach(channel => {
-      months.forEach(month => {
-        cells.push({
-          channelId: channel.id,
-          monthId: month.id,
-          spend: Math.floor(Math.random() * 100000),
-          locked: false
-        });
-      });
-    });
-    return cells;
-  };
-
-  const [cellData, setCellData] = useState<CellData[]>(generateInitialCellData());
-  const [selectedCell, setSelectedCell] = useState<CellData | null>(null);
+  const { channels, setChannels, months, setMonths, cellData, setCellData } = useMediaPlan();
+  const [selectedCell, setSelectedCell] = useState<(typeof cellData)[0] | null>(null);
   
-  const getCell = (channelId: string, monthId: string): CellData => {
+  const getCell = (channelId: string, monthId: string) => {
     return cellData.find(cell => cell.channelId === channelId && cell.monthId === monthId) || 
-      { channelId, monthId, spend: 0, locked: false };
+      { channelId, monthId, spend: 0, locked: false, priceIndex: 100, seasonalIndex: 100 };
   };
 
   const formatCurrency = (value: number): string => {
@@ -84,13 +25,13 @@ const MediaPlanTable = () => {
     }).format(value);
   };
 
-  const handleCellClick = (cell: CellData) => {
+  const handleCellClick = (cell: (typeof cellData)[0]) => {
     if (!cell.locked) {
       setSelectedCell(cell);
     }
   };
 
-  const handleCellUpdate = (updatedCell: CellData) => {
+  const handleCellUpdate = (updatedCell: (typeof cellData)[0]) => {
     setCellData(prevData => 
       prevData.map(cell => 
         cell.channelId === updatedCell.channelId && cell.monthId === updatedCell.monthId
@@ -227,7 +168,47 @@ const MediaPlanTable = () => {
                       )}
                       onClick={() => handleCellClick(cell)}
                     >
-                      {formatCurrency(cell.spend)}
+                      <div className="flex flex-col">
+                        <div className="flex justify-between items-center">
+                          {formatCurrency(cell.spend)}
+                          {cell.locked && (
+                            <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+                          )}
+                        </div>
+                        
+                        {/* Indicators for price and seasonal indices if they're not 100 */}
+                        {(cell.priceIndex !== 100 || cell.seasonalIndex !== 100) && (
+                          <div className="flex text-xs text-muted-foreground mt-1 gap-2">
+                            {cell.priceIndex !== 100 && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="flex items-center">
+                                    <DollarSign className="h-3 w-3 mr-0.5" />
+                                    <span>{cell.priceIndex}</span>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Price Index: {cell.priceIndex}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                            
+                            {cell.seasonalIndex !== 100 && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="flex items-center">
+                                    <Percent className="h-3 w-3 mr-0.5" />
+                                    <span>{cell.seasonalIndex}</span>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Seasonal Index: {cell.seasonalIndex}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </td>
                   );
                 })}

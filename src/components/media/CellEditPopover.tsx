@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Lock, Unlock } from 'lucide-react';
+import { Lock, Unlock, DollarSign, Percent } from 'lucide-react';
 
 // Cell data type matching the parent component
 type CellData = {
@@ -13,6 +13,8 @@ type CellData = {
   monthId: string;
   spend: number;
   locked: boolean;
+  priceIndex: number;
+  seasonalIndex: number;
 };
 
 interface CellEditPopoverProps {
@@ -30,6 +32,22 @@ const CellEditPopover = ({ cell, onUpdate, onClose }: CellEditPopoverProps) => {
     setEditedCell({
       ...editedCell,
       spend: numericValue ? parseInt(numericValue, 10) : 0
+    });
+  };
+
+  const handlePriceIndexChange = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setEditedCell({
+      ...editedCell,
+      priceIndex: numericValue ? parseInt(numericValue, 10) : 100
+    });
+  };
+
+  const handleSeasonalIndexChange = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setEditedCell({
+      ...editedCell,
+      seasonalIndex: numericValue ? parseInt(numericValue, 10) : 100
     });
   };
 
@@ -55,6 +73,40 @@ const CellEditPopover = ({ cell, onUpdate, onClose }: CellEditPopoverProps) => {
             />
           </div>
           
+          <div className="grid gap-2">
+            <Label htmlFor="price-index">Price Index</Label>
+            <div className="flex items-center">
+              <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
+              <Input
+                id="price-index"
+                type="text"
+                value={editedCell.priceIndex}
+                onChange={(e) => handlePriceIndexChange(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Base is 100. Higher values mean more expensive.
+            </p>
+          </div>
+          
+          <div className="grid gap-2">
+            <Label htmlFor="seasonal-index">Seasonal Index</Label>
+            <div className="flex items-center">
+              <Percent className="h-4 w-4 mr-2 text-muted-foreground" />
+              <Input
+                id="seasonal-index"
+                type="text"
+                value={editedCell.seasonalIndex}
+                onChange={(e) => handleSeasonalIndexChange(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Base is 100. Higher values indicate stronger seasonality.
+            </p>
+          </div>
+          
           <div className="flex items-center justify-between">
             <Label htmlFor="lock-cell">Lock Cell</Label>
             <Switch
@@ -65,8 +117,6 @@ const CellEditPopover = ({ cell, onUpdate, onClose }: CellEditPopoverProps) => {
               }
             />
           </div>
-          
-          {/* Additional controls could be added here for season index, price index, etc. */}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancel</Button>

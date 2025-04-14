@@ -6,8 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PlayCircle, BarChart3 } from 'lucide-react';
 import MediaPlanTable from '../media/MediaPlanTable';
+import AdvancedSettingsTables from '../media/AdvancedSettingsTables';
 
-const SimulationView = () => {
+interface SimulationViewProps {
+  isAdvancedMode?: boolean;
+}
+
+const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
   const [selectedModel, setSelectedModel] = useState("predictify_roi");
   const [simulating, setSimulating] = useState(false);
   const [simulationComplete, setSimulationComplete] = useState(false);
@@ -57,6 +62,8 @@ const SimulationView = () => {
         <TabsContent value="budget" className="space-y-6">
           <MediaPlanTable />
           
+          {isAdvancedMode && <AdvancedSettingsTables />}
+          
           {simulationComplete && (
             <Card>
               <CardContent className="pt-6">
@@ -81,10 +88,12 @@ const SimulationView = () => {
         
         <TabsContent value="optimization" className="space-y-6">
           <MediaPlanTable />
+          {isAdvancedMode && <AdvancedSettingsTables />}
         </TabsContent>
         
         <TabsContent value="forecast" className="space-y-6">
           <MediaPlanTable />
+          {isAdvancedMode && <AdvancedSettingsTables />}
         </TabsContent>
       </Tabs>
     </div>
