@@ -1,13 +1,44 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
+import { useState } from 'react';
+import AppLayout from '@/components/layout/AppLayout';
+import UploadPlanView from '@/components/views/UploadPlanView';
+import GeneratePlanView from '@/components/views/GeneratePlanView';
+import SimulationView from '@/components/views/SimulationView';
+import LibraryView from '@/components/views/LibraryView';
+
+// Mock authentication logic - in a real app, this would be handled by an auth provider
 const Index = () => {
+  // In a real application, this would be determined by your auth system
+  // For demo purposes, set to true to bypass login
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [activeView, setActiveView] = useState('simulation');
+
+  // For demo purposes, enable this to redirect to login page
+  // if (!isAuthenticated) {
+  //   window.location.href = '/login';
+  //   return null;
+  // }
+
+  // Render the appropriate view based on activeView state
+  const renderView = () => {
+    switch (activeView) {
+      case 'upload':
+        return <UploadPlanView />;
+      case 'generate':
+        return <GeneratePlanView />;
+      case 'simulation':
+        return <SimulationView />;
+      case 'library':
+        return <LibraryView />;
+      default:
+        return <SimulationView />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <AppLayout>
+      {renderView()}
+    </AppLayout>
   );
 };
 
