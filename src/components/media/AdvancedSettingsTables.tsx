@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ const AdvancedSettingsTables = () => {
   const [localCellData, setLocalCellData] = useState([...cellData]);
 
   // Update local cell data when context data changes
-  useState(() => {
+  useEffect(() => {
     setLocalCellData([...cellData]);
   }, [cellData]);
 
@@ -128,7 +128,7 @@ const AdvancedSettingsTables = () => {
                           className="data-cell text-center"
                         >
                           <Checkbox 
-                            checked={!!getCellValue(channel.id, month.id, 'locked')}
+                            checked={Boolean(getCellValue(channel.id, month.id, 'locked'))}
                             onCheckedChange={(checked) => 
                               handleLockChange(channel.id, month.id, !!checked)
                             }
@@ -170,7 +170,7 @@ const AdvancedSettingsTables = () => {
                           <Input
                             type="number"
                             min="1"
-                            value={getCellValue(channel.id, month.id, 'priceIndex')}
+                            value={String(getCellValue(channel.id, month.id, 'priceIndex'))}
                             onChange={(e) => handlePriceIndexChange(channel.id, month.id, e.target.value)}
                             className="h-8 w-full text-center"
                           />
@@ -214,7 +214,7 @@ const AdvancedSettingsTables = () => {
                           <Input
                             type="number"
                             min="1"
-                            value={getCellValue(channel.id, month.id, 'seasonalIndex')}
+                            value={String(getCellValue(channel.id, month.id, 'seasonalIndex'))}
                             onChange={(e) => handleSeasonalIndexChange(channel.id, month.id, e.target.value)}
                             className="h-8 w-full text-center"
                           />
