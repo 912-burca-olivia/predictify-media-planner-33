@@ -47,17 +47,34 @@ export const useMediaTable = () => {
   }, [months, channels, cellData]);
 
   const data = useMemo(() => 
-    channels.map(channel => ({
-      id: channel.id,
-      channelId: channel.id,
-      monthId: months[0].id, // Default monthId
-      spend: 0,
-      locked: false,
-      priceIndex: 100,
-      seasonalIndex: 100,
-    })),
-    [channels]
+    channels.map(channel => {
+      // Find all cells for this channel
+      const channelCells = cellData.filter(cell => cell.channelId === channel.id);
+      
+      // Get locked status and other properties from the first cell if available
+      const firstCell = channelCells[0];
+      
+      return {
+        id: channel.id,
+        channelId: channel.id,
+        monthId: months[0].id, // Default monthId
+        spend: 0,
+        locked: firstCell?.locked || false,
+        priceIndex: firstCell?.priceIndex || 100,
+        seasonalIndex: firstCell?.seasonalIndex || 100,
+      };
+    }),
+    [channels, cellData]
   );
+
+  // Function to update a cell
+  const updateCell = (updatedCell: any) => {
+    setCellData(prev => prev.map(cell => 
+      (cell.channelId === updatedCell.channelId && cell.monthId === updatedCell.monthId)
+        ? updatedCell
+        : cell
+    ));
+  };
 
   const table = useReactTable({
     data,
@@ -65,5 +82,5 @@ export const useMediaTable = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  return { table };
+  return { table, updateCell };
 };
