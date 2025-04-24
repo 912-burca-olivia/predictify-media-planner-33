@@ -1,17 +1,25 @@
-
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Lock, Unlock, Edit, Download, Save, Percent, DollarSign } from 'lucide-react';
+import { Lock, Unlock, Copy, Paste } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import CellEditPopover from './CellEditPopover';
 import { useMediaPlan } from '@/contexts/MediaPlanContext';
+import { useTableNavigation } from '@/hooks/useTableNavigation';
 
 const MediaPlanTable = () => {
   const { channels, setChannels, months, setMonths, cellData, setCellData } = useMediaPlan();
   const [selectedCell, setSelectedCell] = useState<(typeof cellData)[0] | null>(null);
   
+  const {
+    currentPosition,
+    setCurrentPosition,
+    selectedCells,
+    setSelectedCells,
+    handleKeyDown,
+  } = useTableNavigation(channels, months, setSelectedCell);
+
   const getCell = (channelId: string, monthId: string) => {
     return cellData.find(cell => cell.channelId === channelId && cell.monthId === monthId) || 
       { channelId, monthId, spend: 0, locked: false, priceIndex: 100, seasonalIndex: 100 };
@@ -28,18 +36,9 @@ const MediaPlanTable = () => {
   const handleCellClick = (cell: (typeof cellData)[0]) => {
     if (!cell.locked) {
       setSelectedCell(cell);
+      setCurrentPosition({ channelId: cell.channelId, monthId: cell.monthId });
+      setSelectedCells([{ channelId: cell.channelId, monthId: cell.monthId }]);
     }
-  };
-
-  const handleCellUpdate = (updatedCell: (typeof cellData)[0]) => {
-    setCellData(prevData => 
-      prevData.map(cell => 
-        cell.channelId === updatedCell.channelId && cell.monthId === updatedCell.monthId
-          ? updatedCell
-          : cell
-      )
-    );
-    setSelectedCell(null);
   };
 
   const toggleChannelLock = (channelId: string) => {
@@ -48,14 +47,12 @@ const MediaPlanTable = () => {
     
     const newLockStatus = !channel.locked;
     
-    // Update channel lock status
     setChannels(prevChannels =>
       prevChannels.map(c => 
         c.id === channelId ? { ...c, locked: newLockStatus } : c
       )
     );
     
-    // Update all cells for this channel
     setCellData(prevData =>
       prevData.map(cell =>
         cell.channelId === channelId ? { ...cell, locked: newLockStatus } : cell
@@ -69,14 +66,12 @@ const MediaPlanTable = () => {
     
     const newLockStatus = !month.locked;
     
-    // Update month lock status
     setMonths(prevMonths =>
       prevMonths.map(m => 
         m.id === monthId ? { ...m, locked: newLockStatus } : m
       )
     );
     
-    // Update all cells for this month
     setCellData(prevData =>
       prevData.map(cell =>
         cell.monthId === monthId ? { ...cell, locked: newLockStatus } : cell
@@ -84,7 +79,6 @@ const MediaPlanTable = () => {
     );
   };
 
-  // Calculate totals for each column and row
   const calculateChannelTotal = (channelId: string): number => {
     return cellData
       .filter(cell => cell.channelId === channelId)
@@ -102,15 +96,19 @@ const MediaPlanTable = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div 
+      className="space-y-4" 
+      onKeyDown={handleKeyDown} 
+      tabIndex={0}
+    >
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Media Plan Table</h2>
         <div className="flex space-x-2">
           <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-1" /> Export
+            <Copy className="h-4 w-4 mr-1" /> Copy
           </Button>
           <Button variant="outline" size="sm">
-            <Save className="h-4 w-4 mr-1" /> Save Plan
+            <Paste className="h-4 w-4 mr-1" /> Paste
           </Button>
         </div>
       </div>
@@ -158,13 +156,17 @@ const MediaPlanTable = () => {
                 </td>
                 {months.map(month => {
                   const cell = getCell(channel.id, month.id);
+                  const isSelected = selectedCells.some(
+                    pos => pos.channelId === channel.id && pos.monthId === month.id
+                  );
                   return (
                     <td 
                       key={`${channel.id}-${month.id}`}
                       className={cn(
                         "data-cell",
                         cell.locked && "data-cell-locked",
-                        !cell.locked && "data-cell-editable"
+                        !cell.locked && "data-cell-editable",
+                        isSelected && "bg-primary/10 outline outline-2 outline-primary",
                       )}
                       onClick={() => handleCellClick(cell)}
                     >
@@ -176,7 +178,6 @@ const MediaPlanTable = () => {
                           )}
                         </div>
                         
-                        {/* Indicators for price and seasonal indices if they're not 100 */}
                         {(cell.priceIndex !== 100 || cell.seasonalIndex !== 100) && (
                           <div className="flex text-xs text-muted-foreground mt-1 gap-2">
                             {cell.priceIndex !== 100 && (
@@ -232,7 +233,6 @@ const MediaPlanTable = () => {
         </table>
       </div>
       
-      {/* Cell edit popover */}
       {selectedCell && (
         <CellEditPopover 
           cell={selectedCell} 
