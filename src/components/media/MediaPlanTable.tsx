@@ -1,7 +1,8 @@
+
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Lock, Unlock, Copy, Paste } from 'lucide-react';
+import { Lock, Unlock, DollarSign, Percent } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import CellEditPopover from './CellEditPopover';
@@ -11,6 +12,17 @@ import { useTableNavigation } from '@/hooks/useTableNavigation';
 const MediaPlanTable = () => {
   const { channels, setChannels, months, setMonths, cellData, setCellData } = useMediaPlan();
   const [selectedCell, setSelectedCell] = useState<(typeof cellData)[0] | null>(null);
+  
+  const handleCellUpdate = (updatedCell: (typeof cellData)[0]) => {
+    setCellData(prevData =>
+      prevData.map(cell =>
+        cell.channelId === updatedCell.channelId && cell.monthId === updatedCell.monthId
+          ? updatedCell
+          : cell
+      )
+    );
+    setSelectedCell(null);
+  };
   
   const {
     currentPosition,
@@ -105,10 +117,10 @@ const MediaPlanTable = () => {
         <h2 className="text-xl font-semibold">Media Plan Table</h2>
         <div className="flex space-x-2">
           <Button variant="outline" size="sm">
-            <Copy className="h-4 w-4 mr-1" /> Copy
+            <DollarSign className="h-4 w-4 mr-1" /> Copy
           </Button>
           <Button variant="outline" size="sm">
-            <Paste className="h-4 w-4 mr-1" /> Paste
+            <Percent className="h-4 w-4 mr-1" /> Paste
           </Button>
         </div>
       </div>

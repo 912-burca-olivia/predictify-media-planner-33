@@ -52,6 +52,12 @@ export const useTableNavigation = (
     setSelectedCells([newPosition]);
   };
 
+  const onPaste = (buffer: string, targetPosition: Position) => {
+    console.log('Pasting buffer:', buffer, 'to position:', targetPosition);
+    // This is a placeholder for the actual paste functionality
+    // In a real implementation, this would update cell data based on the buffer
+  };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!currentPosition) return;
 
@@ -79,7 +85,7 @@ export const useTableNavigation = (
         }
         break;
       case 'v':
-        if (e.ctrlKey || e.metaKey && copyBuffer) {
+        if ((e.ctrlKey || e.metaKey) && copyBuffer) {
           // Handle paste event through callback
           onPaste(copyBuffer, currentPosition);
         }
@@ -95,4 +101,3 @@ export const useTableNavigation = (
     handleKeyDown,
   };
 };
-
