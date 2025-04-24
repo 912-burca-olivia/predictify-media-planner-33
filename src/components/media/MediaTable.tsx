@@ -2,6 +2,7 @@
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { useMediaTable } from '@/hooks/useMediaTable';
 import { cn } from '@/lib/utils';
+import { flexRender } from '@tanstack/react-table';
 
 export const MediaTable = () => {
   const { table } = useMediaTable();
