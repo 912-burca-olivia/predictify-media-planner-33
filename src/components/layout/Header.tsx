@@ -1,7 +1,6 @@
 
 import { User, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Toggle } from "@/components/ui/toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   DropdownMenu, 
@@ -39,14 +38,29 @@ const Header = ({ isAdvancedMode, setIsAdvancedMode }: HeaderProps) => {
         </div>
         
         <div className="flex items-center space-x-6">
-          <div className="flex items-center rounded-full border px-2 py-1">
-            <span className="text-sm font-medium mr-2">Standard</span>
-            <Toggle 
-              pressed={isAdvancedMode} 
-              onPressedChange={setIsAdvancedMode} 
-              className="data-[state=on]:bg-predictify-purple"
-            />
-            <span className="text-sm font-medium ml-2">Advanced</span>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant={isAdvancedMode ? "outline" : "default"} 
+              size="sm"
+              onClick={() => setIsAdvancedMode(false)}
+              className="relative"
+            >
+              Standard
+              {!isAdvancedMode && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-predictify-purple"></span>
+              )}
+            </Button>
+            <Button 
+              variant={isAdvancedMode ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setIsAdvancedMode(true)}
+              className="relative"
+            >
+              Advanced
+              {isAdvancedMode && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-predictify-purple"></span>
+              )}
+            </Button>
           </div>
           
           <DropdownMenu>

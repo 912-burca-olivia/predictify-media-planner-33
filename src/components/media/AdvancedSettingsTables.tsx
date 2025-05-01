@@ -11,13 +11,15 @@ import { useMediaPlan } from '@/contexts/MediaPlanContext';
 import { toast } from 'sonner';
 
 const AdvancedSettingsTables = () => {
-  const { channels, months, cellData, setCellData } = useMediaPlan();
+  const { channels, setChannels, months, cellData, setCellData } = useMediaPlan();
   const [localCellData, setLocalCellData] = useState([...cellData]);
+  const [localChannels, setLocalChannels] = useState([...channels]);
 
   // Update local cell data when context data changes
   useEffect(() => {
     setLocalCellData([...cellData]);
-  }, [cellData]);
+    setLocalChannels([...channels]);
+  }, [cellData, channels]);
 
   const handleLockChange = (channelId: string, monthId: string, checked: boolean) => {
     setLocalCellData(prevData =>
@@ -53,13 +55,39 @@ const AdvancedSettingsTables = () => {
     );
   };
 
+  const handleMaxIncreaseChange = (channelId: string, value: string) => {
+    const numValue = parseInt(value, 10) || 0;
+    
+    setLocalChannels(prevData =>
+      prevData.map(channel =>
+        channel.id === channelId
+          ? { ...channel, maxIncrease: numValue }
+          : channel
+      )
+    );
+  };
+
+  const handleMaxDecreaseChange = (channelId: string, value: string) => {
+    const numValue = parseInt(value, 10) || 0;
+    
+    setLocalChannels(prevData =>
+      prevData.map(channel =>
+        channel.id === channelId
+          ? { ...channel, maxDecrease: numValue }
+          : channel
+      )
+    );
+  };
+
   const saveChanges = () => {
     setCellData(localCellData);
+    setChannels(localChannels);
     toast.success('Advanced settings saved successfully');
   };
 
   const resetChanges = () => {
     setLocalCellData([...cellData]);
+    setLocalChannels([...channels]);
     toast.info('Changes reset to current values');
   };
 
@@ -100,6 +128,7 @@ const AdvancedSettingsTables = () => {
             <TabsTrigger value="locks">Cell Locks</TabsTrigger>
             <TabsTrigger value="price">Price Index</TabsTrigger>
             <TabsTrigger value="seasonal">Seasonal Index</TabsTrigger>
+            <TabsTrigger value="limits">Channel Limits</TabsTrigger>
           </TabsList>
           
           {/* Cell Locks Table */}
@@ -227,6 +256,53 @@ const AdvancedSettingsTables = () => {
             </div>
             <p className="text-muted-foreground text-sm">
               Seasonal index is based on 100 as default. A value of 120 means this month has 20% more seasonal impact.
+            </p>
+          </TabsContent>
+          
+          {/* Channel Limits Table - New */}
+          <TabsContent value="limits" className="space-y-4">
+            <div className="editable-table-wrapper">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th className="table-header sticky left-0 z-10 bg-card">Channel</th>
+                    <th className="table-header">Maximum Allowed Increase (%)</th>
+                    <th className="table-header">Maximum Allowed Decrease (%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {localChannels.map(channel => (
+                    <tr key={channel.id}>
+                      <td className="table-header sticky left-0 z-10 bg-card">
+                        {channel.name}
+                      </td>
+                      <td className="data-cell">
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={String(channel.maxIncrease || 0)}
+                          onChange={(e) => handleMaxIncreaseChange(channel.id, e.target.value)}
+                          className="h-8 w-full text-center"
+                        />
+                      </td>
+                      <td className="data-cell">
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={String(channel.maxDecrease || 0)}
+                          onChange={(e) => handleMaxDecreaseChange(channel.id, e.target.value)}
+                          className="h-8 w-full text-center"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-muted-foreground text-sm">
+              These values define the maximum percentage a channel's budget can increase or decrease during optimization.
             </p>
           </TabsContent>
         </Tabs>

@@ -60,7 +60,7 @@ const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
         </TabsList>
         
         <TabsContent value="budget" className="space-y-6">
-          <MediaPlanTable />
+          <MediaPlanTable isAdvancedMode={isAdvancedMode} />
           
           {isAdvancedMode && <AdvancedSettingsTables />}
           
@@ -87,12 +87,12 @@ const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
         </TabsContent>
         
         <TabsContent value="optimization" className="space-y-6">
-          <MediaPlanTable />
+          <MediaPlanTable isAdvancedMode={isAdvancedMode} />
           {isAdvancedMode && <AdvancedSettingsTables />}
         </TabsContent>
         
         <TabsContent value="forecast" className="space-y-6">
-          <MediaPlanTable />
+          <MediaPlanTable isAdvancedMode={isAdvancedMode} />
           {isAdvancedMode && <AdvancedSettingsTables />}
         </TabsContent>
       </Tabs>

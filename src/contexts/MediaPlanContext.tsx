@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Types for our media plan data
@@ -6,6 +5,8 @@ export type MediaChannel = {
   id: string;
   name: string;
   locked: boolean;
+  maxIncrease?: number;
+  maxDecrease?: number;
 };
 
 export type MonthData = {
@@ -36,12 +37,12 @@ const MediaPlanContext = createContext<MediaPlanContextType | undefined>(undefin
 
 // Sample initial data
 const initialChannels: MediaChannel[] = [
-  { id: 'tv', name: 'TV', locked: false },
-  { id: 'radio', name: 'Radio', locked: false },
-  { id: 'social', name: 'Social Media', locked: false },
-  { id: 'search', name: 'Search', locked: false },
-  { id: 'display', name: 'Display', locked: false },
-  { id: 'print', name: 'Print', locked: false },
+  { id: 'tv', name: 'TV', locked: false, maxIncrease: 15, maxDecrease: 10 },
+  { id: 'radio', name: 'Radio', locked: false, maxIncrease: 20, maxDecrease: 15 },
+  { id: 'social', name: 'Social Media', locked: false, maxIncrease: 25, maxDecrease: 10 },
+  { id: 'search', name: 'Search', locked: false, maxIncrease: 30, maxDecrease: 20 },
+  { id: 'display', name: 'Display', locked: false, maxIncrease: 15, maxDecrease: 15 },
+  { id: 'print', name: 'Print', locked: false, maxIncrease: 10, maxDecrease: 25 },
 ];
 
 const initialMonths: MonthData[] = [

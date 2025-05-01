@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import { DollarSign, Percent } from 'lucide-react';
 import { MediaTable } from './MediaTable';
 
-const MediaPlanTable = () => {
+interface MediaPlanTableProps {
+  isAdvancedMode: boolean;
+}
+
+const MediaPlanTable = ({ isAdvancedMode }: MediaPlanTableProps) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -18,7 +22,7 @@ const MediaPlanTable = () => {
         </div>
       </div>
       
-      <MediaTable />
+      <MediaTable isAdvancedMode={isAdvancedMode} />
     </div>
   );
 };
