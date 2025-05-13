@@ -15,7 +15,7 @@ import {
   FolderOpen,
   Sparkles
 } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useMediaPlan } from "@/contexts/MediaPlanContext";
 
 interface SidebarProps {
@@ -24,6 +24,7 @@ interface SidebarProps {
 
 const Sidebar = ({ className }: SidebarProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { channels, months } = useMediaPlan();
   
   // Calculate total number of channels and months for the badge
@@ -45,8 +46,7 @@ const Sidebar = ({ className }: SidebarProps) => {
                   <SidebarMenuButton variant="default" className="justify-start h-10 px-2" asChild>
                     <a href="/" onClick={(e) => {
                       e.preventDefault();
-                      window.history.pushState({}, '', '/');
-                      window.dispatchEvent(new Event('popstate'));
+                      navigate('/');
                     }}>
                       <BarChart3 className="mr-2 h-4 w-4" />
                       <span className="truncate">Media Plan Simulation</span>
@@ -58,8 +58,7 @@ const Sidebar = ({ className }: SidebarProps) => {
                   <SidebarMenuButton variant="default" className="justify-start h-10 px-2" asChild>
                     <a href="/auto-generate" onClick={(e) => {
                       e.preventDefault();
-                      window.history.pushState({}, '', '/auto-generate');
-                      window.dispatchEvent(new Event('popstate'));
+                      navigate('/auto-generate');
                     }}>
                       <Sparkles className="mr-2 h-4 w-4" />
                       <span className="truncate">Auto Generate</span>
