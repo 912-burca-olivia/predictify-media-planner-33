@@ -58,7 +58,7 @@ const Sidebar = ({ className }: SidebarProps) => {
                   <SidebarMenuButton variant="default" className="justify-start h-10 px-2" asChild>
                     <a href="/auto-generate" onClick={(e) => {
                       e.preventDefault();
-                      window.history.pushState({}, '', '/');
+                      window.history.pushState({}, '', '/auto-generate');
                       window.dispatchEvent(new Event('popstate'));
                     }}>
                       <Sparkles className="mr-2 h-4 w-4" />
