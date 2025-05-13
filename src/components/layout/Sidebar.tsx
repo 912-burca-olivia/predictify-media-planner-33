@@ -42,7 +42,7 @@ const Sidebar = ({ className }: SidebarProps) => {
             <div className="flex-1 flex flex-col gap-0.5 mt-4">
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton variant="ghost" className="justify-start h-10 px-2" asChild>
+                  <SidebarMenuButton variant="default" className="justify-start h-10 px-2" asChild>
                     <a href="/" onClick={(e) => {
                       e.preventDefault();
                       window.history.pushState({}, '', '/');
@@ -55,7 +55,7 @@ const Sidebar = ({ className }: SidebarProps) => {
                 </SidebarMenuItem>
                 
                 <SidebarMenuItem>
-                  <SidebarMenuButton variant="ghost" className="justify-start h-10 px-2" asChild>
+                  <SidebarMenuButton variant="default" className="justify-start h-10 px-2" asChild>
                     <a href="/auto-generate" onClick={(e) => {
                       e.preventDefault();
                       window.history.pushState({}, '', '/');
@@ -68,21 +68,21 @@ const Sidebar = ({ className }: SidebarProps) => {
                 </SidebarMenuItem>
                 
                 <SidebarMenuItem>
-                  <SidebarMenuButton variant="ghost" className="justify-start h-10 px-2">
+                  <SidebarMenuButton variant="default" className="justify-start h-10 px-2">
                     <FileText className="mr-2 h-4 w-4" />
                     <span className="truncate">Upload Plan</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 
                 <SidebarMenuItem>
-                  <SidebarMenuButton variant="ghost" className="justify-start h-10 px-2">
+                  <SidebarMenuButton variant="default" className="justify-start h-10 px-2">
                     <FilePlus className="mr-2 h-4 w-4" />
                     <span className="truncate">New Plan</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 
                 <SidebarMenuItem>
-                  <SidebarMenuButton variant="ghost" className="justify-start h-10 px-2">
+                  <SidebarMenuButton variant="default" className="justify-start h-10 px-2">
                     <FolderOpen className="mr-2 h-4 w-4" />
                     <span className="truncate">Media Plan Library</span>
                   </SidebarMenuButton>
