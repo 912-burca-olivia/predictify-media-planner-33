@@ -15,12 +15,6 @@ const Index = () => {
   const [activeView, setActiveView] = useState('autogenerate');
   const [isAdvancedMode, setIsAdvancedMode] = useState(true); // Set to true for testing advanced features
 
-  // For demo purposes, enable this to redirect to login page
-  // if (!isAuthenticated) {
-  //   window.location.href = '/login';
-  //   return null;
-  // }
-
   // Render the appropriate view based on activeView state
   const renderView = () => {
     switch (activeView) {

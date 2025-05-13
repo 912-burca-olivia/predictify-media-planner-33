@@ -18,7 +18,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen w-full bg-background">
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header isAdvancedMode={isAdvancedMode} setIsAdvancedMode={setIsAdvancedMode} />
