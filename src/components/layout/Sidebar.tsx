@@ -1,70 +1,86 @@
 
-import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Sidebar as UISidebar } from "@/components/ui/sidebar";
 import { 
-  Upload, 
-  Sparkles, 
-  PlayCircle, 
-  SlidersHorizontal,
-  TrendingUp,
-  FolderKanban,
-  ChevronRight,
-  ChevronLeft
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+  BarChart3, 
+  FilePlus, 
+  FileText, 
+  FolderOpen,
+  Sparkles
+} from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { useMediaPlan } from "@/contexts/MediaPlanContext";
 
-const sidebarItems = [
-  { id: 'upload', label: 'Upload Plan', icon: Upload },
-  { id: 'generate', label: 'Auto Generate Plan', icon: Sparkles },
-  { id: 'simulate', label: 'Simulate', icon: PlayCircle },
-  { id: 'optimize', label: 'Optimize', icon: SlidersHorizontal },
-  { id: 'forecast', label: 'Forecast', icon: TrendingUp },
-  { id: 'library', label: 'My Plans & Models', icon: FolderKanban },
-];
+interface SidebarProps {
+  className?: string;
+}
 
-const Sidebar = () => {
-  const [activeItem, setActiveItem] = useState('upload');
-  const [collapsed, setCollapsed] = useState(false);
-
+const Sidebar = ({ className }: SidebarProps) => {
+  const location = useLocation();
+  const { channels, months } = useMediaPlan();
+  
+  // Calculate total number of channels and months for the badge
+  const totalChannels = channels.length;
+  const totalMonths = months.length;
+  
   return (
-    <div
-      className={cn(
-        "flex flex-col bg-sidebar transition-all duration-300 ease-in-out relative group",
-        collapsed ? "w-16" : "w-64"
-      )}
-    >
-      <div className="flex-1 py-4">
-        <nav className="space-y-1 px-2">
-          {sidebarItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveItem(item.id)}
-              className={cn(
-                "flex items-center px-2 py-3 rounded-md w-full transition-colors",
-                activeItem === item.id
-                  ? "bg-sidebar-accent text-sidebar-primary"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-              )}
-            >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
-              {!collapsed && (
-                <span className="ml-3 text-sm font-medium">{item.label}</span>
-              )}
-            </button>
-          ))}
-        </nav>
+    <UISidebar className="border-r" hideCollapsed={false}>
+      <div className="flex h-full flex-col py-3 px-3 gap-1">
+        <div className="h-10 flex items-center">
+          <span className="text-lg text-primary font-semibold px-2">Predictify</span>
+        </div>
+        
+        <div className="flex-1 flex flex-col gap-0.5 mt-4">
+          <Button variant="ghost" className="justify-start h-10 px-2" asChild>
+            <a href="/" onClick={(e) => {
+              e.preventDefault();
+              window.history.pushState({}, '', '/');
+              window.dispatchEvent(new Event('popstate'));
+            }}>
+              <BarChart3 className="mr-2 h-4 w-4" />
+              <span className="truncate">Media Plan Simulation</span>
+            </a>
+          </Button>
+          
+          <Button variant="ghost" className="justify-start h-10 px-2" asChild>
+            <a href="/auto-generate" onClick={(e) => {
+              e.preventDefault();
+              window.history.pushState({}, '', '/');
+              window.dispatchEvent(new Event('popstate'));
+            }}>
+              <Sparkles className="mr-2 h-4 w-4" />
+              <span className="truncate">Auto Generate</span>
+            </a>
+          </Button>
+          
+          <Button variant="ghost" className="justify-start h-10 px-2">
+            <FileText className="mr-2 h-4 w-4" />
+            <span className="truncate">Upload Plan</span>
+          </Button>
+          
+          <Button variant="ghost" className="justify-start h-10 px-2">
+            <FilePlus className="mr-2 h-4 w-4" />
+            <span className="truncate">New Plan</span>
+          </Button>
+          
+          <Button variant="ghost" className="justify-start h-10 px-2">
+            <FolderOpen className="mr-2 h-4 w-4" />
+            <span className="truncate">Media Plan Library</span>
+          </Button>
+        </div>
+        
+        <div className="px-2 py-3 border-t">
+          <div className="text-xs text-muted-foreground flex justify-between">
+            <span>Channels</span>
+            <span className="bg-muted rounded-sm px-1">{totalChannels}</span>
+          </div>
+          <div className="text-xs text-muted-foreground mt-1 flex justify-between">
+            <span>Time Periods</span>
+            <span className="bg-muted rounded-sm px-1">{totalMonths}</span>
+          </div>
+        </div>
       </div>
-      
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-6 bg-sidebar-accent rounded-full p-1 text-sidebar-foreground hover:text-sidebar-primary focus:outline-none"
-      >
-        {collapsed ? (
-          <ChevronRight className="h-4 w-4" />
-        ) : (
-          <ChevronLeft className="h-4 w-4" />
-        )}
-      </button>
-    </div>
+    </UISidebar>
   );
 };
 
