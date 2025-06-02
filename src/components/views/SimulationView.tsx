@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { PlayCircle, BarChart3 } from 'lucide-react';
+import { PlayCircle, BarChart3, ChevronDown } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import MediaPlanTable from '../media/MediaPlanTable';
 import AdvancedSettingsTables from '../media/AdvancedSettingsTables';
 import ModelAllocationsTable from '../media/ModelAllocationsTable';
@@ -53,6 +53,15 @@ const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
       setSelectedModels(prev => prev.filter(id => id !== modelId));
     }
   };
+
+  const getSelectedModelsText = () => {
+    if (selectedModels.length === 0) return "Select models";
+    if (selectedModels.length === 1) {
+      const model = availableModels.find(m => m.id === selectedModels[0]);
+      return model?.name || "1 model selected";
+    }
+    return `${selectedModels.length} models selected`;
+  };
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -60,22 +69,27 @@ const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
         <h1 className="text-2xl font-bold">Media Plan Simulation</h1>
         <div className="flex items-center space-x-2">
           {isAdvancedMode ? (
-            <div className="w-[300px]">
+            <div className="w-[250px]">
               <Label className="text-sm font-medium mb-2 block">Select Models</Label>
-              <div className="space-y-2 border rounded-md p-3 bg-background">
-                {availableModels.map((model) => (
-                  <div key={model.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={model.id}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    {getSelectedModelsText()}
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[250px] bg-background border shadow-md">
+                  {availableModels.map((model) => (
+                    <DropdownMenuCheckboxItem
+                      key={model.id}
                       checked={selectedModels.includes(model.id)}
                       onCheckedChange={(checked) => handleModelToggle(model.id, !!checked)}
-                    />
-                    <Label htmlFor={model.id} className="text-sm font-normal">
+                    >
                       {model.name}
-                    </Label>
-                  </div>
-                ))}
-              </div>
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
             <Select value={selectedModel} onValueChange={setSelectedModel}>
