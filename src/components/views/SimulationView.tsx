@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { PlayCircle, BarChart3, ChevronDown } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { HelpTooltip } from '@/components/ui/help-tooltip';
 import MediaPlanTable from '../media/MediaPlanTable';
 import AdvancedSettingsTables from '../media/AdvancedSettingsTables';
 import ModelAllocationsTable from '../media/ModelAllocationsTable';
@@ -70,7 +71,10 @@ const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
         <div className="flex items-center space-x-2">
           {isAdvancedMode ? (
             <div className="w-[250px]">
-              <Label className="text-sm font-medium mb-2 block">Select Models</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <Label className="text-sm font-medium">Select Models</Label>
+                <HelpTooltip content="Choose one or more models to run your simulation. Multiple models allow you to compare different approaches and find the optimal media allocation strategy." />
+              </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="w-full justify-between">
@@ -92,18 +96,24 @@ const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
               </DropdownMenu>
             </div>
           ) : (
-            <Select value={selectedModel} onValueChange={setSelectedModel}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select Model" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableModels.map((model) => (
-                  <SelectItem key={model.id} value={model.id}>
-                    {model.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm font-medium">Model</Label>
+                <HelpTooltip content="Select the predictive model to use for your simulation. Different models use various algorithms and data sources to optimize your media spend." />
+              </div>
+              <Select value={selectedModel} onValueChange={setSelectedModel}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableModels.map((model) => (
+                    <SelectItem key={model.id} value={model.id}>
+                      {model.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           )}
           <Button 
             onClick={handleRunSimulation}
@@ -118,7 +128,10 @@ const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
       {isAdvancedMode && selectedModels.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Model Allocations</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle>Model Allocations</CardTitle>
+              <HelpTooltip content="Configure how much weight each selected model should have in the final recommendation. Higher percentages give more influence to that model's results." />
+            </div>
           </CardHeader>
           <CardContent>
             <ModelAllocationsTable selectedModels={selectedModels} />
@@ -128,9 +141,24 @@ const SimulationView = ({ isAdvancedMode = false }: SimulationViewProps) => {
       
       <Tabs defaultValue="budget" className="w-full">
         <TabsList>
-          <TabsTrigger value="budget">Budget Simulation</TabsTrigger>
-          <TabsTrigger value="optimization">Media Optimization</TabsTrigger>
-          <TabsTrigger value="forecast">Sales Forecast</TabsTrigger>
+          <TabsTrigger value="budget">
+            <div className="flex items-center gap-2">
+              Budget Simulation
+              <HelpTooltip content="Optimize your media allocation based on a fixed budget constraint. Find the best way to distribute your spending across channels and time periods." />
+            </div>
+          </TabsTrigger>
+          <TabsTrigger value="optimization">
+            <div className="flex items-center gap-2">
+              Media Optimization
+              <HelpTooltip content="Advanced optimization that considers multiple constraints and objectives to find the optimal media mix for your goals." />
+            </div>
+          </TabsTrigger>
+          <TabsTrigger value="forecast">
+            <div className="flex items-center gap-2">
+              Sales Forecast
+              <HelpTooltip content="Predict future sales performance based on your planned media investments and historical data patterns." />
+            </div>
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="budget" className="space-y-6">

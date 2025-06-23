@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { useMediaPlan } from '@/contexts/MediaPlanContext';
 import { toast } from '@/hooks/use-toast';
+import { HelpTooltip } from '@/components/ui/help-tooltip';
 
 const AutoGenerateView = () => {
   // State for model selection and metric inputs
@@ -129,29 +130,48 @@ const AutoGenerateView = () => {
       
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-medium">Plan Parameters</h2>
-        <Select value={selectedModel} onValueChange={setSelectedModel}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Select Model" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="predictify_roi">Predictify ROI Model</SelectItem>
-            <SelectItem value="predictify_mmm">Predictify MMM</SelectItem>
-            <SelectItem value="custom_model">Custom Model</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Model</label>
+            <HelpTooltip content="Choose the predictive model that will be used to generate your optimized media plan. Each model uses different algorithms and data sources." />
+          </div>
+          <Select value={selectedModel} onValueChange={setSelectedModel}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select Model" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="predictify_roi">Predictify ROI Model</SelectItem>
+              <SelectItem value="predictify_mmm">Predictify MMM</SelectItem>
+              <SelectItem value="custom_model">Custom Model</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <Tabs defaultValue="budget" className="w-full">
         <TabsList className="grid grid-cols-2 w-full">
-          <TabsTrigger value="budget">Optimize on Budget</TabsTrigger>
-          <TabsTrigger value="kpi">Optimize on KPI Goal</TabsTrigger>
+          <TabsTrigger value="budget">
+            <div className="flex items-center gap-2">
+              Optimize on Budget
+              <HelpTooltip content="Set a fixed budget and let the system optimize how to allocate it across channels and time periods for maximum return." />
+            </div>
+          </TabsTrigger>
+          <TabsTrigger value="kpi">
+            <div className="flex items-center gap-2">
+              Optimize on KPI Goal
+              <HelpTooltip content="Set a target KPI (like revenue or conversions) and let the system determine the optimal budget allocation to achieve that goal." />
+            </div>
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="budget" className="space-y-4 pt-4">
           <div className="space-y-2">
-            <label htmlFor="budget-input" className="text-sm font-medium">
-              Budget
-            </label>
+            <div className="flex items-center gap-2">
+              <label htmlFor="budget-input" className="text-sm font-medium">
+                Budget
+              </label>
+              <HelpTooltip content="Enter your total available budget. The system will optimize how to distribute this amount across all selected channels and time periods." />
+            </div>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
               <Input
@@ -170,9 +190,12 @@ const AutoGenerateView = () => {
         
         <TabsContent value="kpi" className="space-y-4 pt-4">
           <div className="space-y-2">
-            <label htmlFor="kpi-input" className="text-sm font-medium">
-              KPI Target
-            </label>
+            <div className="flex items-center gap-2">
+              <label htmlFor="kpi-input" className="text-sm font-medium">
+                KPI Target
+              </label>
+              <HelpTooltip content="Set your target KPI value (such as revenue, leads, or conversions). The system will calculate the optimal budget needed to achieve this goal." />
+            </div>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
               <Input
@@ -192,7 +215,10 @@ const AutoGenerateView = () => {
       
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-medium">Channel & Month Selection</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-medium">Channel & Month Selection</h2>
+            <HelpTooltip content="Select which channels and months to include in your optimization. Only the checked combinations will be considered for budget allocation." />
+          </div>
           <div className="flex gap-2">
             <Button 
               variant="outline" 
