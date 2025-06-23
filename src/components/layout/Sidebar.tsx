@@ -13,7 +13,8 @@ import {
   FilePlus, 
   FileText, 
   FolderOpen,
-  Sparkles
+  Sparkles,
+  BookOpen
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMediaPlan } from "@/contexts/MediaPlanContext";
@@ -60,6 +61,17 @@ const Sidebar = ({ className }: SidebarProps) => {
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
                   <span className="truncate">Auto Generate</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  variant="default" 
+                  className="justify-start h-10 px-2"
+                  onClick={() => navigate('/user-guide')}
+                >
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  <span className="truncate">User Guide</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
