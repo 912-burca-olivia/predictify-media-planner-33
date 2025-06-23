@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, BookOpen, Settings, Zap, BarChart3, Upload, FileText, Sparkles, PlayCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, Settings, Zap, BarChart3, Sparkles } from 'lucide-react';
 
 interface GuideStep {
   title: string;
@@ -18,31 +18,16 @@ const standardGuideSteps: GuideStep[] = [
     description: "Your AI-powered media planning and simulation platform",
     content: (
       <div className="space-y-4">
-        <div className="bg-gradient-to-r from-predictify-purple/10 to-blue-500/10 rounded-lg p-6 border-2 border-dashed border-predictify-purple/30">
-          <div className="flex items-center space-x-3 mb-4">
-            <BarChart3 className="h-8 w-8 text-predictify-purple" />
-            <div>
-              <h3 className="text-xl font-semibold">Media Plan Simulation</h3>
-              <p className="text-muted-foreground">Main dashboard for planning and optimization</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            <div className="bg-background/50 rounded p-3 text-center">
-              <FileText className="h-6 w-6 mx-auto mb-2 text-blue-500" />
-              <p className="text-sm">Budget Planning</p>
-            </div>
-            <div className="bg-background/50 rounded p-3 text-center">
-              <Settings className="h-6 w-6 mx-auto mb-2 text-green-500" />
-              <p className="text-sm">Optimization</p>
-            </div>
-            <div className="bg-background/50 rounded p-3 text-center">
-              <BarChart3 className="h-6 w-6 mx-auto mb-2 text-purple-500" />
-              <p className="text-sm">Forecasting</p>
-            </div>
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop" 
+          alt="Predictify Dashboard Overview"
+          className="w-full rounded-lg border shadow-sm"
+        />
         <p className="text-muted-foreground">
           Predictify helps you optimize your media spend using advanced AI models. This guide will walk you through the Standard workflow.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          💡 <strong>Tip:</strong> The main dashboard gives you access to all media planning tools in one place.
         </p>
       </div>
     ),
@@ -53,56 +38,11 @@ const standardGuideSteps: GuideStep[] = [
     description: "Configure channels, budgets, and time periods",
     content: (
       <div className="space-y-4">
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-medium">Google Ads</span>
-              <Badge variant="secondary">Active</Badge>
-            </div>
-            <div className="grid grid-cols-4 gap-2 text-sm">
-              <div className="bg-background rounded p-2 text-center">
-                <p className="text-muted-foreground">Jan</p>
-                <p className="font-medium">$5,000</p>
-              </div>
-              <div className="bg-background rounded p-2 text-center">
-                <p className="text-muted-foreground">Feb</p>
-                <p className="font-medium">$5,500</p>
-              </div>
-              <div className="bg-background rounded p-2 text-center">
-                <p className="text-muted-foreground">Mar</p>
-                <p className="font-medium">$6,000</p>
-              </div>
-              <div className="bg-background rounded p-2 text-center">
-                <p className="text-muted-foreground">Apr</p>
-                <p className="font-medium">$5,800</p>
-              </div>
-            </div>
-          </div>
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-medium">Facebook Ads</span>
-              <Badge variant="secondary">Active</Badge>
-            </div>
-            <div className="grid grid-cols-4 gap-2 text-sm">
-              <div className="bg-background rounded p-2 text-center">
-                <p className="text-muted-foreground">Jan</p>
-                <p className="font-medium">$3,000</p>
-              </div>
-              <div className="bg-background rounded p-2 text-center">
-                <p className="text-muted-foreground">Feb</p>
-                <p className="font-medium">$3,200</p>
-              </div>
-              <div className="bg-background rounded p-2 text-center">
-                <p className="text-muted-foreground">Mar</p>
-                <p className="font-medium">$3,500</p>
-              </div>
-              <div className="bg-background rounded p-2 text-center">
-                <p className="text-muted-foreground">Apr</p>
-                <p className="font-medium">$3,300</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop" 
+          alt="Media Plan Budget Configuration"
+          className="w-full rounded-lg border shadow-sm"
+        />
         <p className="text-sm text-muted-foreground">
           💡 <strong>Tip:</strong> Click on any cell to edit budget amounts. You can add or remove channels using the controls at the top of the table.
         </p>
@@ -115,35 +55,11 @@ const standardGuideSteps: GuideStep[] = [
     description: "Choose the AI model for your simulation",
     content: (
       <div className="space-y-4">
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="font-medium">Model Selection</h4>
-            <div className="flex items-center space-x-2">
-              <select className="border rounded px-3 py-1 text-sm bg-background">
-                <option>Predictify ROI Model</option>
-                <option>Predictify MMM</option>
-                <option>Custom Model</option>
-                <option>Attribution Model</option>
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-background rounded p-3">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium">Predictify ROI Model</span>
-              </div>
-              <p className="text-xs text-muted-foreground">Optimized for ROI maximization with real-time bidding insights</p>
-            </div>
-            <div className="bg-background/50 rounded p-3 opacity-60">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-3 h-3 bg-muted rounded-full"></div>
-                <span className="text-sm font-medium">Predictify MMM</span>
-              </div>
-              <p className="text-xs text-muted-foreground">Marketing Mix Modeling for attribution analysis</p>
-            </div>
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=400&fit=crop" 
+          alt="AI Model Selection Interface"
+          className="w-full rounded-lg border shadow-sm"
+        />
         <p className="text-sm text-muted-foreground">
           💡 <strong>Tip:</strong> The Predictify ROI Model is recommended for most use cases as it provides the best balance of accuracy and speed.
         </p>
@@ -156,40 +72,14 @@ const standardGuideSteps: GuideStep[] = [
     description: "Execute the simulation and analyze results",
     content: (
       <div className="space-y-4">
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="font-medium">Simulation Controls</h4>
-            <Button className="bg-predictify-purple hover:bg-predictify-purple/90">
-              <PlayCircle className="mr-2 h-4 w-4" />
-              Run Simulation
-            </Button>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm">Processing budget allocations...</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-              <span className="text-sm">Analyzing channel performance...</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-4 h-4 bg-muted rounded-full"></div>
-              <span className="text-sm text-muted-foreground">Generating recommendations...</span>
-            </div>
-          </div>
-        </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium text-green-800">Simulation Complete!</h4>
-            <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-              +12.4% ROI Improvement
-            </div>
-          </div>
-          <p className="text-sm text-green-700 mt-2">
-            Your optimized media plan shows significant improvement potential.
-          </p>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop" 
+          alt="Simulation Running Progress"
+          className="w-full rounded-lg border shadow-sm"
+        />
+        <p className="text-sm text-muted-foreground">
+          💡 <strong>Tip:</strong> Simulations typically complete within 30-60 seconds depending on the complexity of your media plan.
+        </p>
       </div>
     ),
     highlights: ["One-click simulation", "Real-time progress tracking", "Clear ROI improvements"]
@@ -199,29 +89,11 @@ const standardGuideSteps: GuideStep[] = [
     description: "Analyze the simulation outcomes and recommendations",
     content: (
       <div className="space-y-4">
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <h4 className="font-medium mb-4">Results Dashboard</h4>
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="bg-background rounded p-3 text-center">
-              <div className="text-2xl font-bold text-green-600">+12.4%</div>
-              <div className="text-sm text-muted-foreground">ROI Improvement</div>
-            </div>
-            <div className="bg-background rounded p-3 text-center">
-              <div className="text-2xl font-bold text-blue-600">$45K</div>
-              <div className="text-sm text-muted-foreground">Additional Revenue</div>
-            </div>
-            <div className="bg-background rounded p-3 text-center">
-              <div className="text-2xl font-bold text-purple-600">15%</div>
-              <div className="text-sm text-muted-foreground">Budget Efficiency</div>
-            </div>
-          </div>
-          <div className="h-32 bg-gradient-to-r from-blue-100 to-purple-100 rounded border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
-            <div className="text-center">
-              <BarChart3 className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">Interactive Charts & Insights</p>
-            </div>
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop" 
+          alt="Results Dashboard with Charts"
+          className="w-full rounded-lg border shadow-sm"
+        />
         <p className="text-sm text-muted-foreground">
           💡 <strong>Tip:</strong> Use the tabs above to switch between Budget Simulation, Media Optimization, and Sales Forecast views.
         </p>
@@ -237,29 +109,16 @@ const advancedGuideSteps: GuideStep[] = [
     description: "Unlock powerful multi-model analysis and advanced controls",
     content: (
       <div className="space-y-4">
-        <div className="bg-gradient-to-r from-purple-500/10 to-orange-500/10 rounded-lg p-6 border-2 border-dashed border-purple-500/30">
-          <div className="flex items-center space-x-3 mb-4">
-            <Settings className="h-8 w-8 text-purple-500" />
-            <div>
-              <h3 className="text-xl font-semibold">Advanced Mode Features</h3>
-              <p className="text-muted-foreground">Multi-model analysis with granular control</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div className="bg-background/50 rounded p-3">
-              <Zap className="h-6 w-6 mb-2 text-yellow-500" />
-              <p className="text-sm font-medium">Multiple AI Models</p>
-              <p className="text-xs text-muted-foreground">Run simultaneous comparisons</p>
-            </div>
-            <div className="bg-background/50 rounded p-3">
-              <BarChart3 className="h-6 w-6 mb-2 text-blue-500" />
-              <p className="text-sm font-medium">Model Allocations</p>
-              <p className="text-xs text-muted-foreground">Weight model influence</p>
-            </div>
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop" 
+          alt="Advanced Mode Dashboard"
+          className="w-full rounded-lg border shadow-sm"
+        />
         <p className="text-muted-foreground">
           Advanced Mode provides professional-grade tools for sophisticated media planning with multi-model ensemble predictions.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          💡 <strong>Tip:</strong> Switch to Advanced Mode when you need more granular control over your simulations.
         </p>
       </div>
     ),
@@ -270,32 +129,11 @@ const advancedGuideSteps: GuideStep[] = [
     description: "Choose and configure multiple AI models simultaneously",
     content: (
       <div className="space-y-4">
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="font-medium">Select Models</h4>
-            <Button variant="outline" className="w-[200px] justify-between">
-              3 models selected
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center space-x-3 p-2 bg-background rounded">
-              <div className="w-4 h-4 bg-green-500 rounded border-2 border-green-600"></div>
-              <span className="text-sm font-medium">Predictify ROI Model</span>
-              <Badge variant="secondary" className="ml-auto">Primary</Badge>
-            </div>
-            <div className="flex items-center space-x-3 p-2 bg-background rounded">
-              <div className="w-4 h-4 bg-green-500 rounded border-2 border-green-600"></div>
-              <span className="text-sm font-medium">Predictify MMM</span>
-              <Badge variant="outline" className="ml-auto">Secondary</Badge>
-            </div>
-            <div className="flex items-center space-x-3 p-2 bg-background rounded">
-              <div className="w-4 h-4 bg-green-500 rounded border-2 border-green-600"></div>
-              <span className="text-sm font-medium">Attribution Model</span>
-              <Badge variant="outline" className="ml-auto">Validation</Badge>
-            </div>
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop" 
+          alt="Multi-Model Selection Interface"
+          className="w-full rounded-lg border shadow-sm"
+        />
         <p className="text-sm text-muted-foreground">
           💡 <strong>Tip:</strong> Using multiple models provides more robust predictions by combining different algorithmic approaches.
         </p>
@@ -308,66 +146,11 @@ const advancedGuideSteps: GuideStep[] = [
     description: "Fine-tune how each model influences monthly predictions",
     content: (
       <div className="space-y-4">
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <h4 className="font-medium mb-4">Model Allocations (%)</h4>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Model</th>
-                  <th className="text-center p-2">Jan</th>
-                  <th className="text-center p-2">Feb</th>
-                  <th className="text-center p-2">Mar</th>
-                  <th className="text-center p-2">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="p-2 font-medium">Predictify ROI</td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1 bg-blue-50" value="40" readOnly />
-                  </td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1" value="35" />
-                  </td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1" value="30" />
-                  </td>
-                  <td className="text-center p-2 font-medium">35%</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-2 font-medium">Predictify MMM</td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1" value="35" />
-                  </td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1 bg-blue-50" value="40" readOnly />
-                  </td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1" value="35" />
-                  </td>
-                  <td className="text-center p-2 font-medium">37%</td>
-                </tr>
-                <tr>
-                  <td className="p-2 font-medium">Attribution Model</td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1" value="25" />
-                  </td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1" value="25" />
-                  </td>
-                  <td className="text-center p-2">
-                    <input className="w-16 text-center border rounded px-2 py-1 bg-blue-50" value="35" readOnly />
-                  </td>
-                  <td className="text-center p-2 font-medium">28%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-3 text-xs text-muted-foreground">
-            * Each column sums to 100%. Editing one cell automatically adjusts others in that month.
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=400&fit=crop" 
+          alt="Model Allocations Matrix"
+          className="w-full rounded-lg border shadow-sm"
+        />
         <p className="text-sm text-muted-foreground">
           💡 <strong>Tip:</strong> Higher allocations give more weight to that model's predictions. The Total column shows each model's overall influence.
         </p>
@@ -380,46 +163,14 @@ const advancedGuideSteps: GuideStep[] = [
     description: "Configure channel constraints and optimization parameters",
     content: (
       <div className="space-y-4">
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <h4 className="font-medium mb-4">Channel Constraints</h4>
-          <div className="space-y-3">
-            <div className="grid grid-cols-4 gap-3 text-sm">
-              <div className="font-medium">Channel</div>
-              <div className="font-medium text-center">Min Budget</div>
-              <div className="font-medium text-center">Max Budget</div>
-              <div className="font-medium text-center">Growth Rate</div>
-            </div>
-            <div className="grid grid-cols-4 gap-3 text-sm items-center">
-              <div>Google Ads</div>
-              <input className="text-center border rounded px-2 py-1 bg-background" value="$1,000" />
-              <input className="text-center border rounded px-2 py-1 bg-background" value="$10,000" />
-              <input className="text-center border rounded px-2 py-1 bg-background" value="10%" />
-            </div>
-            <div className="grid grid-cols-4 gap-3 text-sm items-center">
-              <div>Facebook Ads</div>
-              <input className="text-center border rounded px-2 py-1 bg-background" value="$500" />
-              <input className="text-center border rounded px-2 py-1 bg-background" value="$8,000" />
-              <input className="text-center border rounded px-2 py-1 bg-background" value="15%" />
-            </div>
-          </div>
-        </div>
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <h4 className="font-medium mb-4">Optimization Parameters</h4>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium">Target ROI</label>
-              <input className="w-full border rounded px-3 py-2 mt-1 bg-background" value="250%" />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Risk Tolerance</label>
-              <select className="w-full border rounded px-3 py-2 mt-1 bg-background">
-                <option>Conservative</option>
-                <option>Moderate</option>
-                <option>Aggressive</option>
-              </select>
-            </div>
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop" 
+          alt="Advanced Settings Configuration"
+          className="w-full rounded-lg border shadow-sm"
+        />
+        <p className="text-sm text-muted-foreground">
+          💡 <strong>Tip:</strong> Set budget constraints per channel to ensure realistic optimization within your business limits.
+        </p>
       </div>
     ),
     highlights: ["Channel-specific constraints", "Budget min/max limits", "Optimization parameters"]
@@ -429,35 +180,11 @@ const advancedGuideSteps: GuideStep[] = [
     description: "Comprehensive multi-model comparison and insights",
     content: (
       <div className="space-y-4">
-        <div className="border rounded-lg p-4 bg-muted/30">
-          <h4 className="font-medium mb-4">Model Performance Comparison</h4>
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="bg-background rounded p-3">
-              <div className="text-sm font-medium text-green-600 mb-1">Predictify ROI</div>
-              <div className="text-xl font-bold">+14.2%</div>
-              <div className="text-xs text-muted-foreground">ROI Improvement</div>
-            </div>
-            <div className="bg-background rounded p-3">
-              <div className="text-sm font-medium text-blue-600 mb-1">Predictify MMM</div>
-              <div className="text-xl font-bold">+11.8%</div>
-              <div className="text-xs text-muted-foreground">ROI Improvement</div>
-            </div>
-            <div className="bg-background rounded p-3">
-              <div className="text-sm font-medium text-purple-600 mb-1">Attribution</div>
-              <div className="text-xl font-bold">+9.3%</div>
-              <div className="text-xs text-muted-foreground">ROI Improvement</div>
-            </div>
-          </div>
-          <div className="bg-green-50 border border-green-200 rounded p-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-green-800">Ensemble Prediction: +12.4% ROI</span>
-            </div>
-            <p className="text-xs text-green-700 mt-1">
-              Weighted average based on your model allocations
-            </p>
-          </div>
-        </div>
+        <img 
+          src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop" 
+          alt="Advanced Results Dashboard"
+          className="w-full rounded-lg border shadow-sm"
+        />
         <p className="text-sm text-muted-foreground">
           💡 <strong>Tip:</strong> The ensemble prediction combines all models based on your allocation percentages for more robust forecasting.
         </p>
