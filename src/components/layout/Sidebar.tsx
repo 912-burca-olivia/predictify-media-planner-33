@@ -90,9 +90,13 @@ const Sidebar = ({ className }: SidebarProps) => {
               </SidebarMenuItem>
               
               <SidebarMenuItem>
-                <SidebarMenuButton variant="default" className="justify-start h-10 px-2">
+                <SidebarMenuButton 
+                  variant="default" 
+                  className="justify-start h-10 px-2"
+                  onClick={() => navigate('/my-media-plans')}
+                >
                   <FolderOpen className="mr-2 h-4 w-4" />
-                  <span className="truncate">Media Plan Library</span>
+                  <span className="truncate">My Media Plans</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

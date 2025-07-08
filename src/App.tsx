@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import { MediaPlanProvider } from "./contexts/MediaPlanContext";
 import AutoGenerate from "./pages/AutoGenerate";
 import UserGuide from "./pages/UserGuide";
+import MyMediaPlans from "./pages/MyMediaPlans";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auto-generate" element={<AutoGenerate />} />
             <Route path="/user-guide" element={<UserGuide />} />
+            <Route path="/my-media-plans" element={<MyMediaPlans />} />
             <Route path="/login" element={<Login />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
