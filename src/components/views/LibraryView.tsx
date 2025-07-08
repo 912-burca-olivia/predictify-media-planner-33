@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Share2, MoreHorizontal, Trash, Edit, Copy } from 'lucide-react';
 import { 
   DropdownMenu, 
@@ -70,54 +71,61 @@ const LibraryView = () => {
         </TabsList>
         
         <TabsContent value="plans" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {mediaPlans.map(plan => (
-              <Card key={plan.id} className="group hover:border-primary/50 transition-colors">
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg line-clamp-1">{plan.name}</CardTitle>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-70 group-hover:opacity-100">
-                          <MoreHorizontal className="h-4 w-4" />
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Plan Name</TableHead>
+                  <TableHead>Last Modified</TableHead>
+                  <TableHead>Total Budget</TableHead>
+                  <TableHead>Channels</TableHead>
+                  <TableHead className="w-[100px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mediaPlans.map(plan => (
+                  <TableRow key={plan.id} className="hover:bg-muted/50">
+                    <TableCell className="font-medium">{plan.name}</TableCell>
+                    <TableCell>{plan.lastModified}</TableCell>
+                    <TableCell>{formatCurrency(plan.totalBudget)}</TableCell>
+                    <TableCell>{plan.channels}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm">
+                          Open Plan
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
-                          <span>Rename</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Copy className="mr-2 h-4 w-4" />
-                          <span>Duplicate</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Share2 className="mr-2 h-4 w-4" />
-                          <span>Share</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeletePlan(plan.id)}>
-                          <Trash className="mr-2 h-4 w-4" />
-                          <span>Delete</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </CardHeader>
-                <CardContent className="pb-2">
-                  <div className="text-sm text-muted-foreground">
-                    <p>Last modified: {plan.lastModified}</p>
-                    <p>Total Budget: {formatCurrency(plan.totalBudget)}</p>
-                    <p>Channels: {plan.channels}</p>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="default" size="sm" className="w-full">
-                    Open Plan
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                              <Edit className="mr-2 h-4 w-4" />
+                              <span>Rename</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Copy className="mr-2 h-4 w-4" />
+                              <span>Duplicate</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Share2 className="mr-2 h-4 w-4" />
+                              <span>Share</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeletePlan(plan.id)}>
+                              <Trash className="mr-2 h-4 w-4" />
+                              <span>Delete</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </TabsContent>
         
