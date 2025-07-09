@@ -1,9 +1,7 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Share2, MoreHorizontal, Trash, Edit, Copy } from 'lucide-react';
 import { 
   DropdownMenu, 
@@ -71,25 +69,25 @@ const LibraryView = () => {
         </TabsList>
         
         <TabsContent value="plans" className="space-y-4">
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Plan Name</TableHead>
-                  <TableHead>Last Modified</TableHead>
-                  <TableHead>Total Budget</TableHead>
-                  <TableHead>Channels</TableHead>
-                  <TableHead className="w-[100px]">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+          <div className="rounded-md border overflow-auto">
+            <table className="w-full caption-bottom text-sm">
+              <thead className="[&_tr]:border-b">
+                <tr>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Plan Name</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Last Modified</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Total Budget</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Channels</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[100px]">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="[&_tr:last-child]:border-0">
                 {mediaPlans.map(plan => (
-                  <TableRow key={plan.id} className="hover:bg-muted/50">
-                    <TableCell className="font-medium">{plan.name}</TableCell>
-                    <TableCell>{plan.lastModified}</TableCell>
-                    <TableCell>{formatCurrency(plan.totalBudget)}</TableCell>
-                    <TableCell>{plan.channels}</TableCell>
-                    <TableCell>
+                  <tr key={plan.id} className="border-b transition-colors hover:bg-muted/50">
+                    <td className="p-4 align-middle font-medium">{plan.name}</td>
+                    <td className="p-4 align-middle">{plan.lastModified}</td>
+                    <td className="p-4 align-middle">{formatCurrency(plan.totalBudget)}</td>
+                    <td className="p-4 align-middle">{plan.channels}</td>
+                    <td className="p-4 align-middle">
                       <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm">
                           Open Plan
@@ -121,11 +119,11 @@ const LibraryView = () => {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
           </div>
         </TabsContent>
         
