@@ -14,7 +14,9 @@ import {
   FileText, 
   FolderOpen,
   Sparkles,
-  BookOpen
+  BookOpen,
+  Users,
+  Shield
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMediaPlan } from "@/contexts/MediaPlanContext";
@@ -97,6 +99,28 @@ const Sidebar = ({ className }: SidebarProps) => {
                 >
                   <FolderOpen className="mr-2 h-4 w-4" />
                   <span className="truncate">My Media Plans</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  variant="default" 
+                  className="justify-start h-10 px-2"
+                  onClick={() => navigate('/organizations')}
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  <span className="truncate">Organizations</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  variant="default" 
+                  className="justify-start h-10 px-2"
+                  onClick={() => navigate('/direct-access')}
+                >
+                  <Shield className="mr-2 h-4 w-4" />
+                  <span className="truncate">Direct Access</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

@@ -11,6 +11,9 @@ import { MediaPlanProvider } from "./contexts/MediaPlanContext";
 import AutoGenerate from "./pages/AutoGenerate";
 import UserGuide from "./pages/UserGuide";
 import MyMediaPlans from "./pages/MyMediaPlans";
+import Organizations from "./pages/Organizations";
+import OrganizationDetails from "./pages/OrganizationDetails";
+import DirectAccess from "./pages/DirectAccess";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +29,9 @@ const App = () => (
             <Route path="/auto-generate" element={<AutoGenerate />} />
             <Route path="/user-guide" element={<UserGuide />} />
             <Route path="/my-media-plans" element={<MyMediaPlans />} />
+            <Route path="/organizations" element={<Organizations />} />
+            <Route path="/organizations/:id" element={<OrganizationDetails />} />
+            <Route path="/direct-access" element={<DirectAccess />} />
             <Route path="/login" element={<Login />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
