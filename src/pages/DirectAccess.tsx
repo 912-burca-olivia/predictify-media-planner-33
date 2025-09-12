@@ -3,10 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Shield, User, Database } from 'lucide-react';
+import { Plus, Search, Shield, User, Database, UserPlus, Upload } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { GrantDirectAccessDialog } from '@/components/access-control/GrantDirectAccessDialog';
 import { RevokeAccessDialog } from '@/components/access-control/RevokeAccessDialog';
+import { AddUserDialog } from '@/components/access-control/AddUserDialog';
+import { AddModelDialog } from '@/components/access-control/AddModelDialog';
 
 interface DirectAccessGrant {
   id: string;
@@ -21,6 +23,8 @@ interface DirectAccessGrant {
 const DirectAccess = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showGrantDialog, setShowGrantDialog] = useState(false);
+  const [showAddUserDialog, setShowAddUserDialog] = useState(false);
+  const [showAddModelDialog, setShowAddModelDialog] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<DirectAccessGrant | null>(null);
 
   // Mock current user role - replace with actual auth
@@ -92,10 +96,20 @@ const DirectAccess = () => {
               Grant individual users access to specific models outside of organization membership
             </p>
           </div>
-          <Button onClick={() => setShowGrantDialog(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Grant Access
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setShowAddUserDialog(true)}>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Add User
+            </Button>
+            <Button variant="outline" onClick={() => setShowAddModelDialog(true)}>
+              <Upload className="mr-2 h-4 w-4" />
+              Add Model
+            </Button>
+            <Button onClick={() => setShowGrantDialog(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Grant Access
+            </Button>
+          </div>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -182,6 +196,16 @@ const DirectAccess = () => {
       <GrantDirectAccessDialog
         open={showGrantDialog}
         onOpenChange={setShowGrantDialog}
+      />
+
+      <AddUserDialog
+        open={showAddUserDialog}
+        onOpenChange={setShowAddUserDialog}
+      />
+
+      <AddModelDialog
+        open={showAddModelDialog}
+        onOpenChange={setShowAddModelDialog}
       />
 
       <RevokeAccessDialog

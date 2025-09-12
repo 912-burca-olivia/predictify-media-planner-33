@@ -138,7 +138,7 @@ export function AssignModelsDialog({ organizationId, open, onOpenChange }: Assig
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Assign Models</DialogTitle>
           <DialogDescription>
@@ -146,8 +146,8 @@ export function AssignModelsDialog({ organizationId, open, onOpenChange }: Assig
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="space-y-4 flex-1 min-h-0">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -172,7 +172,7 @@ export function AssignModelsDialog({ organizationId, open, onOpenChange }: Assig
               )}
             </div>
 
-            <div className="max-h-[300px] overflow-y-auto space-y-3 border rounded-lg p-4">
+            <div className="flex-1 min-h-0 overflow-y-auto space-y-3 border rounded-lg p-4">
               {filteredModels.length === 0 ? (
                 <div className="text-center py-8">
                   <Database className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
@@ -219,7 +219,7 @@ export function AssignModelsDialog({ organizationId, open, onOpenChange }: Assig
             )}
           </div>
           
-          <DialogFooter>
+          <DialogFooter className="mt-4">
             <Button 
               type="button" 
               variant="outline" 

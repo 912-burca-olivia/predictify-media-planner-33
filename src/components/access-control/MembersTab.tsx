@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Plus, Search, MoreHorizontal, Shield, User, Mail, Calendar } from 'lucide-react';
-import { InviteMemberDialog } from './InviteMemberDialog';
+import { AddMemberDialog } from './AddMemberDialog';
 import { RemoveMemberDialog } from './RemoveMemberDialog';
 import { ChangeRoleDialog } from './ChangeRoleDialog';
 
@@ -29,7 +29,7 @@ interface MembersTabProps {
 
 export function MembersTab({ organizationId, userRole }: MembersTabProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [actionType, setActionType] = useState<'remove' | 'changeRole' | null>(null);
 
@@ -101,9 +101,9 @@ export function MembersTab({ organizationId, userRole }: MembersTabProps) {
         </div>
         
         {userRole === 'admin' && (
-          <Button onClick={() => setShowInviteDialog(true)}>
+          <Button onClick={() => setShowAddDialog(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Invite Member
+            Add Member
           </Button>
         )}
       </div>
@@ -130,9 +130,9 @@ export function MembersTab({ organizationId, userRole }: MembersTabProps) {
             }
           </p>
           {userRole === 'admin' && !searchQuery && (
-            <Button onClick={() => setShowInviteDialog(true)}>
+            <Button onClick={() => setShowAddDialog(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Invite Member
+              Add Member
             </Button>
           )}
         </div>
@@ -214,10 +214,10 @@ export function MembersTab({ organizationId, userRole }: MembersTabProps) {
         </div>
       )}
 
-      <InviteMemberDialog
+      <AddMemberDialog
         organizationId={organizationId}
-        open={showInviteDialog}
-        onOpenChange={setShowInviteDialog}
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
       />
 
       <RemoveMemberDialog
