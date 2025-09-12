@@ -190,7 +190,7 @@ export function AddMemberDialog({ organizationId, open, onOpenChange }: AddMembe
               )}
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto space-y-3 border rounded-lg p-4">
+            <div className="overflow-y-auto space-y-3 border rounded-lg p-4 max-h-[300px]">
               {filteredUsers.length === 0 ? (
                 <div className="text-center py-8">
                   <User className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
