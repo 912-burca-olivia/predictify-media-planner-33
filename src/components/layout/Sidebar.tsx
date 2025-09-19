@@ -106,21 +106,10 @@ const Sidebar = ({ className }: SidebarProps) => {
                 <SidebarMenuButton 
                   variant="default" 
                   className="justify-start h-10 px-2"
-                  onClick={() => navigate('/organizations')}
+                  onClick={() => navigate('/admin')}
                 >
                   <Users className="mr-2 h-4 w-4" />
-                  <span className="truncate">Organizations</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  variant="default" 
-                  className="justify-start h-10 px-2"
-                  onClick={() => navigate('/direct-access')}
-                >
-                  <Shield className="mr-2 h-4 w-4" />
-                  <span className="truncate">Direct Access</span>
+                  <span className="truncate">Admin Panel</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
