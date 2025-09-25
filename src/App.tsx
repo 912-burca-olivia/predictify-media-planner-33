@@ -12,6 +12,7 @@ import AutoGenerate from "./pages/AutoGenerate";
 import UserGuide from "./pages/UserGuide";
 import MyMediaPlans from "./pages/MyMediaPlans";
 import AdminPanel from "./pages/AdminPanel";
+import EditModel from "./pages/EditModel";
 import OrganizationDetails from "./pages/OrganizationDetails";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/user-guide" element={<UserGuide />} />
             <Route path="/my-media-plans" element={<MyMediaPlans />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/admin/model/:modelId" element={<EditModel />} />
             <Route path="/admin/organizations/:id" element={<OrganizationDetails />} />
             <Route path="/login" element={<Login />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

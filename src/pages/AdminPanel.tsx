@@ -11,7 +11,6 @@ import { Building2, Users, Database, Key, Search, Plus } from 'lucide-react';
 import { CreateOrganizationDialog } from '@/components/access-control/CreateOrganizationDialog';
 import { AddUserDialog } from '@/components/access-control/AddUserDialog';
 import { AddModelDialog } from '@/components/access-control/AddModelDialog';
-import { EditModelDialog } from '@/components/access-control/EditModelDialog';
 import { GrantDirectAccessDialog } from '@/components/access-control/GrantDirectAccessDialog';
 import { RevokeAccessDialog } from '@/components/access-control/RevokeAccessDialog';
 import { useToast } from '@/hooks/use-toast';
@@ -119,11 +118,9 @@ const AdminPanel = () => {
   const [showCreateOrganization, setShowCreateOrganization] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAddModel, setShowAddModel] = useState(false);
-  const [showEditModel, setShowEditModel] = useState(false);
   const [showGrantAccess, setShowGrantAccess] = useState(false);
   const [showRevokeAccess, setShowRevokeAccess] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState(null);
-  const [selectedModel, setSelectedModel] = useState(null);
 
   // Mock user role - replace with actual auth
   const userRole = 'admin';
@@ -165,8 +162,7 @@ const AdminPanel = () => {
   };
 
   const handleEditModel = (model: any) => {
-    setSelectedModel(model);
-    setShowEditModel(true);
+    navigate(`/admin/model/${model.id}`);
   };
 
   if (userRole !== 'admin') {
@@ -548,12 +544,6 @@ const AdminPanel = () => {
       <GrantDirectAccessDialog
         open={showGrantAccess}
         onOpenChange={setShowGrantAccess}
-      />
-
-      <EditModelDialog
-        open={showEditModel}
-        onOpenChange={setShowEditModel}
-        model={selectedModel}
       />
 
       <RevokeAccessDialog
