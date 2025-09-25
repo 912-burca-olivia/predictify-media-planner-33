@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { DynamicDataSheetGrid, Column } from 'react-datasheet-grid';
+import * as XLSX from 'xlsx';
 import 'react-datasheet-grid/dist/style.css';
 
 interface EditModelDialogProps {
@@ -21,23 +23,22 @@ interface RowData {
   [key: string]: any;
 }
 
+interface SheetData {
+  name: string;
+  data: RowData[];
+  columns: Column<RowData>[];
+}
+
 export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogProps) => {
   const { toast } = useToast();
-  const [data, setData] = useState<RowData[]>([]);
-  const [columns, setColumns] = useState<Column<RowData>[]>([]);
+  const [sheets, setSheets] = useState<SheetData[]>([]);
+  const [activeSheet, setActiveSheet] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   // Mock data - replace with actual data fetching
   useEffect(() => {
     if (model && open) {
-      // Simulate loading model data
-      const mockData = [
-        { id: '1', channel: 'TV', budget: 50000, reach: 1000000, cpm: 5.0 },
-        { id: '2', channel: 'Digital', budget: 30000, reach: 750000, cpm: 4.0 },
-        { id: '3', channel: 'Radio', budget: 15000, reach: 500000, cpm: 3.0 },
-        { id: '4', channel: 'Print', budget: 10000, reach: 200000, cpm: 5.0 },
-      ];
-
+      // Create mock multi-sheet data
       const mockColumns: Column<RowData>[] = [
         {
           component: ({ rowData, setRowData }) => (
@@ -89,8 +90,71 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
         },
       ];
 
-      setData(mockData);
-      setColumns(mockColumns);
+      const mockSheets: SheetData[] = [
+        {
+          name: 'Q1 Media Plan',
+          data: [
+            { id: '1', channel: 'TV', budget: 50000, reach: 1000000, cpm: 5.0 },
+            { id: '2', channel: 'Digital', budget: 30000, reach: 750000, cpm: 4.0 },
+          ],
+          columns: mockColumns,
+        },
+        {
+          name: 'Q2 Media Plan',
+          data: [
+            { id: '1', channel: 'Radio', budget: 15000, reach: 500000, cpm: 3.0 },
+            { id: '2', channel: 'Print', budget: 10000, reach: 200000, cpm: 5.0 },
+          ],
+          columns: mockColumns,
+        },
+        {
+          name: 'Budget Summary',
+          data: [
+            { id: '1', quarter: 'Q1', total_budget: 80000, total_reach: 1750000 },
+            { id: '2', quarter: 'Q2', total_budget: 25000, total_reach: 700000 },
+          ],
+          columns: [
+            {
+              component: ({ rowData, setRowData }) => (
+                <input
+                  className="w-full p-1 border-0 bg-transparent outline-none"
+                  value={rowData.quarter || ''}
+                  onChange={(e) => setRowData({ ...rowData, quarter: e.target.value })}
+                />
+              ),
+              title: 'Quarter',
+              basis: 120,
+            },
+            {
+              component: ({ rowData, setRowData }) => (
+                <input
+                  type="number"
+                  className="w-full p-1 border-0 bg-transparent outline-none text-right"
+                  value={rowData.total_budget || ''}
+                  onChange={(e) => setRowData({ ...rowData, total_budget: parseFloat(e.target.value) || 0 })}
+                />
+              ),
+              title: 'Total Budget ($)',
+              basis: 150,
+            },
+            {
+              component: ({ rowData, setRowData }) => (
+                <input
+                  type="number"
+                  className="w-full p-1 border-0 bg-transparent outline-none text-right"
+                  value={rowData.total_reach || ''}
+                  onChange={(e) => setRowData({ ...rowData, total_reach: parseInt(e.target.value) || 0 })}
+                />
+              ),
+              title: 'Total Reach',
+              basis: 150,
+            },
+          ],
+        },
+      ];
+
+      setSheets(mockSheets);
+      setActiveSheet(mockSheets[0]?.name || '');
     }
   }, [model, open]);
 
@@ -117,19 +181,93 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
     }
   };
 
+  const currentSheet = sheets.find(sheet => sheet.name === activeSheet);
+
   const addRow = () => {
+    if (!currentSheet) return;
+    
     const newRow: RowData = {
       id: Date.now().toString(),
-      channel: '',
-      budget: 0,
-      reach: 0,
-      cpm: 0,
     };
-    setData(prev => [...prev, newRow]);
+    
+    setSheets(prev => prev.map(sheet => 
+      sheet.name === activeSheet 
+        ? { ...sheet, data: [...sheet.data, newRow] }
+        : sheet
+    ));
   };
 
-  const deleteRow = (rowIndex: number) => {
-    setData(prev => prev.filter((_, index) => index !== rowIndex));
+  const updateSheetData = (newData: RowData[]) => {
+    setSheets(prev => prev.map(sheet => 
+      sheet.name === activeSheet 
+        ? { ...sheet, data: newData }
+        : sheet
+    ));
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+        
+        const newSheets: SheetData[] = workbook.SheetNames.map(sheetName => {
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          
+          if (jsonData.length === 0) return null;
+          
+          const headers = jsonData[0] as string[];
+          const rows = jsonData.slice(1) as any[][];
+          
+          const columns: Column<RowData>[] = headers.map(header => ({
+            component: ({ rowData, setRowData }) => (
+              <input
+                className="w-full p-1 border-0 bg-transparent outline-none"
+                value={rowData[header] || ''}
+                onChange={(e) => setRowData({ ...rowData, [header]: e.target.value })}
+              />
+            ),
+            title: header,
+            basis: 120,
+          }));
+          
+          const data: RowData[] = rows.map((row, index) => {
+            const rowData: RowData = { id: index.toString() };
+            headers.forEach((header, colIndex) => {
+              rowData[header] = row[colIndex] || '';
+            });
+            return rowData;
+          });
+          
+          return {
+            name: sheetName,
+            data,
+            columns,
+          };
+        }).filter(Boolean) as SheetData[];
+        
+        if (newSheets.length > 0) {
+          setSheets(newSheets);
+          setActiveSheet(newSheets[0].name);
+          toast({
+            title: "File Uploaded",
+            description: `Loaded ${newSheets.length} sheet(s) from Excel file.`,
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to parse Excel file. Please check the file format.",
+          variant: "destructive",
+        });
+      }
+    };
+    reader.readAsBinaryString(file);
   };
 
   if (!model) return null;
@@ -147,28 +285,56 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
               Market: {model.market} | Organization: {model.organization || 'Unassigned'}
             </div>
             <div className="flex gap-2">
+              <input
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="excel-upload"
+              />
+              <label htmlFor="excel-upload">
+                <Button variant="outline" size="sm" asChild>
+                  <span>Upload Excel</span>
+                </Button>
+              </label>
               <Button variant="outline" size="sm" onClick={addRow}>
                 Add Row
               </Button>
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 border rounded-md overflow-hidden bg-background">
-            <DynamicDataSheetGrid
-              value={data}
-              onChange={setData}
-              columns={columns}
-              height={400}
-              addRowsComponent={false}
-              rowClassName={() => "hover:bg-muted/50"}
-              headerRowHeight={40}
-              rowHeight={36}
-            />
-          </div>
+          {sheets.length > 0 && (
+            <Tabs value={activeSheet} onValueChange={setActiveSheet} className="flex-1 min-h-0 flex flex-col">
+              <TabsList className="grid w-full grid-cols-3">
+                {sheets.map((sheet) => (
+                  <TabsTrigger key={sheet.name} value={sheet.name} className="text-xs">
+                    {sheet.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              
+              {sheets.map((sheet) => (
+                <TabsContent key={sheet.name} value={sheet.name} className="flex-1 min-h-0 mt-4">
+                  <div className="flex-1 min-h-0 border rounded-md overflow-hidden bg-background">
+                    <DynamicDataSheetGrid
+                      value={sheet.data}
+                      onChange={updateSheetData}
+                      columns={sheet.columns}
+                      height={400}
+                      addRowsComponent={false}
+                      rowClassName={() => "hover:bg-muted/50"}
+                      headerRowHeight={40}
+                      rowHeight={36}
+                    />
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
+          )}
 
           <div className="flex justify-between">
             <div className="text-xs text-muted-foreground">
-              {data.length} rows • Use Ctrl+C/Ctrl+V to copy/paste from Excel
+              {currentSheet ? `${currentSheet.data.length} rows` : '0 rows'} • Use Ctrl+C/Ctrl+V to copy/paste from Excel
             </div>
             <div className="flex gap-2">
               <Button
