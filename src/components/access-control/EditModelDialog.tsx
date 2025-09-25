@@ -362,13 +362,15 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
 
           {sheets.length > 0 && (
             <Tabs value={activeSheet} onValueChange={setActiveSheet} className="flex-1 min-h-0 flex flex-col">
-              <TabsList className={`grid w-full ${sheets.length <= 3 ? `grid-cols-${sheets.length}` : 'grid-cols-3'}`}>
-                {sheets.map((sheet) => (
-                  <TabsTrigger key={sheet.name} value={sheet.name} className="text-xs">
-                    {sheet.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+              <div className="overflow-x-auto">
+                <TabsList className="flex w-max min-w-full">
+                  {sheets.map((sheet) => (
+                    <TabsTrigger key={sheet.name} value={sheet.name} className="text-xs whitespace-nowrap">
+                      {sheet.name}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </div>
               
               {sheets.map((sheet) => (
                 <TabsContent key={sheet.name} value={sheet.name} className="flex-1 min-h-0 mt-4">
