@@ -183,6 +183,57 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
 
   const currentSheet = sheets.find(sheet => sheet.name === activeSheet);
 
+  const addSheet = () => {
+    const sheetName = `Sheet ${sheets.length + 1}`;
+    const newSheet: SheetData = {
+      name: sheetName,
+      data: [{ id: '1' }],
+      columns: [
+        {
+          component: ({ rowData, setRowData }) => (
+            <input
+              className="w-full p-1 border-0 bg-transparent outline-none"
+              value={rowData.column1 || ''}
+              onChange={(e) => setRowData({ ...rowData, column1: e.target.value })}
+            />
+          ),
+          title: 'Column 1',
+          basis: 120,
+        },
+      ],
+    };
+    setSheets(prev => [...prev, newSheet]);
+    setActiveSheet(sheetName);
+  };
+
+  const addColumn = () => {
+    if (!currentSheet) return;
+    
+    const columnCount = currentSheet.columns.length;
+    const newColumnKey = `column${columnCount + 1}`;
+    const newColumn: Column<RowData> = {
+      component: ({ rowData, setRowData }) => (
+        <input
+          className="w-full p-1 border-0 bg-transparent outline-none"
+          value={rowData[newColumnKey] || ''}
+          onChange={(e) => setRowData({ ...rowData, [newColumnKey]: e.target.value })}
+        />
+      ),
+      title: `Column ${columnCount + 1}`,
+      basis: 120,
+    };
+
+    setSheets(prev => prev.map(sheet => 
+      sheet.name === activeSheet 
+        ? { 
+            ...sheet, 
+            columns: [...sheet.columns, newColumn],
+            data: sheet.data.map(row => ({ ...row, [newColumnKey]: '' }))
+          }
+        : sheet
+    ));
+  };
+
   const addRow = () => {
     if (!currentSheet) return;
     
@@ -297,6 +348,12 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
                   <span>Upload Excel</span>
                 </Button>
               </label>
+              <Button variant="outline" size="sm" onClick={addSheet}>
+                Add Sheet
+              </Button>
+              <Button variant="outline" size="sm" onClick={addColumn}>
+                Add Column
+              </Button>
               <Button variant="outline" size="sm" onClick={addRow}>
                 Add Row
               </Button>
@@ -305,7 +362,7 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
 
           {sheets.length > 0 && (
             <Tabs value={activeSheet} onValueChange={setActiveSheet} className="flex-1 min-h-0 flex flex-col">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className={`grid w-full ${sheets.length <= 3 ? `grid-cols-${sheets.length}` : 'grid-cols-3'}`}>
                 {sheets.map((sheet) => (
                   <TabsTrigger key={sheet.name} value={sheet.name} className="text-xs">
                     {sheet.name}
