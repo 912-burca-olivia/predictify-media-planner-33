@@ -7,12 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Building2, Users, Database, Key, Search, Plus } from 'lucide-react';
+import { Building2, Users, Database, Key, Search, Plus, Trash2, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { CreateOrganizationDialog } from '@/components/access-control/CreateOrganizationDialog';
 import { AddUserDialog } from '@/components/access-control/AddUserDialog';
 import { AddModelDialog } from '@/components/access-control/AddModelDialog';
 import { GrantDirectAccessDialog } from '@/components/access-control/GrantDirectAccessDialog';
 import { RevokeAccessDialog } from '@/components/access-control/RevokeAccessDialog';
+import { RemoveOrganizationDialog } from '@/components/access-control/RemoveOrganizationDialog';
+import { RemoveUserDialog } from '@/components/access-control/RemoveUserDialog';
+import { RemoveModelDialog } from '@/components/access-control/RemoveModelDialog';
 import { useToast } from '@/hooks/use-toast';
 
 // Mock data - replace with actual data fetching
@@ -121,6 +125,12 @@ const AdminPanel = () => {
   const [showGrantAccess, setShowGrantAccess] = useState(false);
   const [showRevokeAccess, setShowRevokeAccess] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState(null);
+  const [showRemoveOrganization, setShowRemoveOrganization] = useState(false);
+  const [selectedOrganization, setSelectedOrganization] = useState(null);
+  const [showRemoveUser, setShowRemoveUser] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showRemoveModel, setShowRemoveModel] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(null);
 
   // Mock user role - replace with actual auth
   const userRole = 'admin';
@@ -163,6 +173,43 @@ const AdminPanel = () => {
 
   const handleEditModel = (model: any) => {
     navigate(`/admin/model/${model.id}`);
+  };
+
+  const handleRemoveOrganization = (org: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedOrganization(org);
+    setShowRemoveOrganization(true);
+  };
+
+  const handleRemoveUser = (user: any) => {
+    setSelectedUser(user);
+    setShowRemoveUser(true);
+  };
+
+  const handleRemoveModel = (model: any) => {
+    setSelectedModel(model);
+    setShowRemoveModel(true);
+  };
+
+  const handleDownloadModel = (model: any) => {
+    // TODO: Replace with actual model data
+    const mockData = [
+      { Channel: 'TV', Spend: 1000, Impressions: 50000, Conversions: 100 },
+      { Channel: 'Digital', Spend: 800, Impressions: 45000, Conversions: 90 },
+      { Channel: 'Radio', Spend: 500, Impressions: 30000, Conversions: 60 },
+    ];
+
+    const worksheet = XLSX.utils.json_to_sheet(mockData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Model Data');
+    
+    const fileName = `${model.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+
+    toast({
+      title: "Model downloaded",
+      description: `${model.name} has been exported as Excel.`,
+    });
   };
 
   if (userRole !== 'admin') {
@@ -259,7 +306,15 @@ const AdminPanel = () => {
                   <Card key={org.id} className="cursor-pointer hover:shadow-md transition-shadow">
                     <CardHeader onClick={() => navigate(`/admin/organizations/${org.id}`)}>
                       <CardTitle className="flex items-center justify-between">
-                        {org.name}
+                        <span>{org.name}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={(e) => handleRemoveOrganization(org, e)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </CardTitle>
                       <CardDescription>
                         {org.memberCount} members • {org.modelCount} models
@@ -350,6 +405,14 @@ const AdminPanel = () => {
                         ) : (
                           <Badge variant="outline">No organization</Badge>
                         )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleRemoveUser(user)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -428,9 +491,25 @@ const AdminPanel = () => {
                         <Button
                           variant="outline"
                           size="sm"
+                          onClick={() => handleDownloadModel(model)}
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => handleEditModel(model)}
                         >
                           Edit
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleRemoveModel(model)}
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </CardContent>
@@ -550,6 +629,24 @@ const AdminPanel = () => {
         open={showRevokeAccess}
         onOpenChange={setShowRevokeAccess}
         grant={selectedGrant}
+      />
+
+      <RemoveOrganizationDialog
+        open={showRemoveOrganization}
+        onOpenChange={setShowRemoveOrganization}
+        organization={selectedOrganization}
+      />
+
+      <RemoveUserDialog
+        open={showRemoveUser}
+        onOpenChange={setShowRemoveUser}
+        user={selectedUser}
+      />
+
+      <RemoveModelDialog
+        open={showRemoveModel}
+        onOpenChange={setShowRemoveModel}
+        model={selectedModel}
       />
     </AppLayout>
   );
