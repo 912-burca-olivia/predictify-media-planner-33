@@ -355,7 +355,7 @@ export default function EditModel() {
                 
                 {sheets.map((sheet) => (
                   <TabsContent key={sheet.name} value={sheet.name} className="space-y-4">
-                    <div className="ag-theme-alpine border rounded-md overflow-hidden" style={{ height: '600px' }}>
+                    <div className="ag-theme-alpine border rounded-md" style={{ height: '600px', width: '100%' }}>
                       <AgGridReact
                         rowData={sheet.data}
                         columnDefs={sheet.columns}
@@ -369,6 +369,8 @@ export default function EditModel() {
                           resizable: true,
                           sortable: true,
                           filter: true,
+                          flex: 1,
+                          minWidth: 100,
                         }}
                       />
                     </div>

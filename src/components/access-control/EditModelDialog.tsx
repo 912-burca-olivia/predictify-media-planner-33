@@ -330,7 +330,7 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
               
               {sheets.map((sheet) => (
                 <TabsContent key={sheet.name} value={sheet.name} className="flex-1 min-h-0 mt-4">
-                  <div className="ag-theme-alpine flex-1 min-h-0 border rounded-md overflow-hidden" style={{ height: 400 }}>
+                  <div className="ag-theme-alpine border rounded-md" style={{ height: '400px', width: '100%' }}>
                     <AgGridReact
                       rowData={sheet.data}
                       columnDefs={sheet.columns}
@@ -344,6 +344,8 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
                         resizable: true,
                         sortable: true,
                         filter: true,
+                        flex: 1,
+                        minWidth: 100,
                       }}
                     />
                   </div>
