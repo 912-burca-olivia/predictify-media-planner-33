@@ -5,11 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { AgGridReact } from 'ag-grid-react';
-import { ColDef } from 'ag-grid-community';
+import { Input } from '@/components/ui/input';
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  createColumnHelper,
+  ColumnDef,
+} from '@tanstack/react-table';
 import * as XLSX from 'xlsx';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 interface RowData {
   id?: string;
@@ -19,7 +23,7 @@ interface RowData {
 interface SheetData {
   name: string;
   data: RowData[];
-  columns: ColDef[];
+  columns: ColumnDef<RowData>[];
 }
 
 export default function EditModel() {
@@ -43,36 +47,54 @@ export default function EditModel() {
     setModel(mockModel);
 
     // Create mock multi-sheet data
-    const mockColumns: ColDef[] = [
+    const mockColumns: ColumnDef<RowData>[] = [
       {
-        field: 'channel',
-        headerName: 'Channel',
-        editable: true,
-        width: 120,
+        accessorKey: 'channel',
+        header: 'Channel',
+        cell: ({ row, column }) => (
+          <Input
+            value={row.original.channel || ''}
+            onChange={(e) => handleCellEdit(row.index, column.id, e.target.value)}
+            className="border-0 h-8 px-2"
+          />
+        ),
       },
       {
-        field: 'budget',
-        headerName: 'Budget ($)',
-        editable: true,
-        width: 120,
-        type: 'numericColumn',
-        valueFormatter: (params) => params.value ? `$${params.value.toLocaleString()}` : '',
+        accessorKey: 'budget',
+        header: 'Budget ($)',
+        cell: ({ row, column }) => (
+          <Input
+            type="number"
+            value={row.original.budget || ''}
+            onChange={(e) => handleCellEdit(row.index, column.id, parseFloat(e.target.value) || 0)}
+            className="border-0 h-8 px-2"
+          />
+        ),
       },
       {
-        field: 'reach',
-        headerName: 'Reach',
-        editable: true,
-        width: 120,
-        type: 'numericColumn',
-        valueFormatter: (params) => params.value ? params.value.toLocaleString() : '',
+        accessorKey: 'reach',
+        header: 'Reach',
+        cell: ({ row, column }) => (
+          <Input
+            type="number"
+            value={row.original.reach || ''}
+            onChange={(e) => handleCellEdit(row.index, column.id, parseInt(e.target.value) || 0)}
+            className="border-0 h-8 px-2"
+          />
+        ),
       },
       {
-        field: 'cpm',
-        headerName: 'CPM ($)',
-        editable: true,
-        width: 100,
-        type: 'numericColumn',
-        valueFormatter: (params) => params.value ? `$${params.value.toFixed(2)}` : '',
+        accessorKey: 'cpm',
+        header: 'CPM ($)',
+        cell: ({ row, column }) => (
+          <Input
+            type="number"
+            step="0.1"
+            value={row.original.cpm || ''}
+            onChange={(e) => handleCellEdit(row.index, column.id, parseFloat(e.target.value) || 0)}
+            className="border-0 h-8 px-2"
+          />
+        ),
       },
     ];
 
@@ -101,26 +123,39 @@ export default function EditModel() {
         ],
         columns: [
           {
-            field: 'quarter',
-            headerName: 'Quarter',
-            editable: true,
-            width: 120,
+            accessorKey: 'quarter',
+            header: 'Quarter',
+            cell: ({ row, column }) => (
+              <Input
+                value={row.original.quarter || ''}
+                onChange={(e) => handleCellEdit(row.index, column.id, e.target.value)}
+                className="border-0 h-8 px-2"
+              />
+            ),
           },
           {
-            field: 'total_budget',
-            headerName: 'Total Budget ($)',
-            editable: true,
-            width: 150,
-            type: 'numericColumn',
-            valueFormatter: (params) => params.value ? `$${params.value.toLocaleString()}` : '',
+            accessorKey: 'total_budget',
+            header: 'Total Budget ($)',
+            cell: ({ row, column }) => (
+              <Input
+                type="number"
+                value={row.original.total_budget || ''}
+                onChange={(e) => handleCellEdit(row.index, column.id, parseFloat(e.target.value) || 0)}
+                className="border-0 h-8 px-2"
+              />
+            ),
           },
           {
-            field: 'total_reach',
-            headerName: 'Total Reach',
-            editable: true,
-            width: 150,
-            type: 'numericColumn',
-            valueFormatter: (params) => params.value ? params.value.toLocaleString() : '',
+            accessorKey: 'total_reach',
+            header: 'Total Reach',
+            cell: ({ row, column }) => (
+              <Input
+                type="number"
+                value={row.original.total_reach || ''}
+                onChange={(e) => handleCellEdit(row.index, column.id, parseInt(e.target.value) || 0)}
+                className="border-0 h-8 px-2"
+              />
+            ),
           },
         ],
       },
@@ -155,6 +190,19 @@ export default function EditModel() {
 
   const currentSheet = sheets.find(sheet => sheet.name === activeSheet);
 
+  const handleCellEdit = (rowIndex: number, columnId: string, value: any) => {
+    setSheets(prev => prev.map(sheet => 
+      sheet.name === activeSheet 
+        ? {
+            ...sheet,
+            data: sheet.data.map((row, idx) =>
+              idx === rowIndex ? { ...row, [columnId]: value } : row
+            )
+          }
+        : sheet
+    ));
+  };
+
   const addSheet = () => {
     const sheetName = `Sheet ${sheets.length + 1}`;
     const newSheet: SheetData = {
@@ -162,10 +210,15 @@ export default function EditModel() {
       data: [{ id: '1' }],
       columns: [
         {
-          field: 'column1',
-          headerName: 'Column 1',
-          editable: true,
-          width: 120,
+          accessorKey: 'column1',
+          header: 'Column 1',
+          cell: ({ row, column }) => (
+            <Input
+              value={row.original.column1 || ''}
+              onChange={(e) => handleCellEdit(row.index, column.id, e.target.value)}
+              className="border-0 h-8 px-2"
+            />
+          ),
         },
       ],
     };
@@ -178,11 +231,16 @@ export default function EditModel() {
     
     const columnCount = currentSheet.columns.length;
     const newColumnKey = `column${columnCount + 1}`;
-    const newColumn: ColDef = {
-      field: newColumnKey,
-      headerName: `Column ${columnCount + 1}`,
-      editable: true,
-      width: 120,
+    const newColumn: ColumnDef<RowData> = {
+      accessorKey: newColumnKey,
+      header: `Column ${columnCount + 1}`,
+      cell: ({ row, column }) => (
+        <Input
+          value={(row.original as any)[newColumnKey] || ''}
+          onChange={(e) => handleCellEdit(row.index, column.id, e.target.value)}
+          className="border-0 h-8 px-2"
+        />
+      ),
     };
 
     setSheets(prev => prev.map(sheet => 
@@ -237,11 +295,16 @@ export default function EditModel() {
           const headers = jsonData[0] as string[];
           const rows = jsonData.slice(1) as any[][];
           
-          const columns: ColDef[] = headers.map(header => ({
-            field: header,
-            headerName: header,
-            editable: true,
-            width: 120,
+          const columns: ColumnDef<RowData>[] = headers.map(header => ({
+            accessorKey: header,
+            header: header,
+            cell: ({ row, column }: any) => (
+              <Input
+                value={row.original[header] || ''}
+                onChange={(e) => handleCellEdit(row.index, column.id, e.target.value)}
+                className="border-0 h-8 px-2"
+              />
+            ),
           }));
           
           const data: RowData[] = rows.map((row, index) => {
@@ -353,32 +416,47 @@ export default function EditModel() {
                   </TabsList>
                 </div>
                 
-                {sheets.map((sheet) => (
-                  <TabsContent key={sheet.name} value={sheet.name} className="space-y-4">
-                    <div className="ag-theme-alpine border rounded-md" style={{ height: '600px', width: '100%' }}>
-                      <AgGridReact
-                        rowData={sheet.data}
-                        columnDefs={sheet.columns}
-                        onCellValueChanged={(params) => {
-                          const updatedData = [...sheet.data];
-                          const rowIndex = params.node.rowIndex!;
-                          updatedData[rowIndex] = params.data;
-                          updateSheetData(updatedData);
-                        }}
-                        defaultColDef={{
-                          resizable: true,
-                          sortable: true,
-                          filter: true,
-                          flex: 1,
-                          minWidth: 100,
-                        }}
-                      />
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {sheet.data.length} rows • Use Ctrl+C/Ctrl+V to copy/paste from Excel
-                    </div>
-                  </TabsContent>
-                ))}
+                {sheets.map((sheet) => {
+                  const table = useReactTable({
+                    data: sheet.data,
+                    columns: sheet.columns,
+                    getCoreRowModel: getCoreRowModel(),
+                  });
+
+                  return (
+                    <TabsContent key={sheet.name} value={sheet.name} className="space-y-4">
+                      <div className="border rounded-md overflow-auto" style={{ maxHeight: '600px' }}>
+                        <table className="w-full">
+                          <thead className="bg-muted sticky top-0">
+                            {table.getHeaderGroups().map(headerGroup => (
+                              <tr key={headerGroup.id}>
+                                {headerGroup.headers.map(header => (
+                                  <th key={header.id} className="px-2 py-3 text-left text-sm font-medium border-b">
+                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                  </th>
+                                ))}
+                              </tr>
+                            ))}
+                          </thead>
+                          <tbody>
+                            {table.getRowModel().rows.map(row => (
+                              <tr key={row.id} className="border-b hover:bg-muted/50">
+                                {row.getVisibleCells().map(cell => (
+                                  <td key={cell.id} className="px-2 py-1">
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {sheet.data.length} rows • Edit cells directly
+                      </div>
+                    </TabsContent>
+                  );
+                })}
               </Tabs>
             )}
           </CardContent>
