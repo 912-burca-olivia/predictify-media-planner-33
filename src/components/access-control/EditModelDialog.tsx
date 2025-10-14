@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { DynamicDataSheetGrid, Column } from 'react-datasheet-grid';
+import { AgGridReact } from 'ag-grid-react';
+import { ColDef } from 'ag-grid-community';
 import * as XLSX from 'xlsx';
-import 'react-datasheet-grid/dist/style.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 interface EditModelDialogProps {
   open: boolean;
@@ -26,7 +28,7 @@ interface RowData {
 interface SheetData {
   name: string;
   data: RowData[];
-  columns: Column<RowData>[];
+  columns: ColDef[];
 }
 
 export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogProps) => {
@@ -39,54 +41,36 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
   useEffect(() => {
     if (model && open) {
       // Create mock multi-sheet data
-      const mockColumns: Column<RowData>[] = [
+      const mockColumns: ColDef[] = [
         {
-          component: ({ rowData, setRowData }) => (
-            <input
-              className="w-full p-1 border-0 bg-transparent outline-none"
-              value={rowData.channel || ''}
-              onChange={(e) => setRowData({ ...rowData, channel: e.target.value })}
-            />
-          ),
-          title: 'Channel',
-          basis: 120,
+          field: 'channel',
+          headerName: 'Channel',
+          editable: true,
+          width: 120,
         },
         {
-          component: ({ rowData, setRowData }) => (
-            <input
-              type="number"
-              className="w-full p-1 border-0 bg-transparent outline-none text-right"
-              value={rowData.budget || ''}
-              onChange={(e) => setRowData({ ...rowData, budget: parseFloat(e.target.value) || 0 })}
-            />
-          ),
-          title: 'Budget ($)',
-          basis: 120,
+          field: 'budget',
+          headerName: 'Budget ($)',
+          editable: true,
+          width: 120,
+          type: 'numericColumn',
+          valueFormatter: (params) => params.value ? `$${params.value.toLocaleString()}` : '',
         },
         {
-          component: ({ rowData, setRowData }) => (
-            <input
-              type="number"
-              className="w-full p-1 border-0 bg-transparent outline-none text-right"
-              value={rowData.reach || ''}
-              onChange={(e) => setRowData({ ...rowData, reach: parseInt(e.target.value) || 0 })}
-            />
-          ),
-          title: 'Reach',
-          basis: 120,
+          field: 'reach',
+          headerName: 'Reach',
+          editable: true,
+          width: 120,
+          type: 'numericColumn',
+          valueFormatter: (params) => params.value ? params.value.toLocaleString() : '',
         },
         {
-          component: ({ rowData, setRowData }) => (
-            <input
-              type="number"
-              step="0.1"
-              className="w-full p-1 border-0 bg-transparent outline-none text-right"
-              value={rowData.cpm || ''}
-              onChange={(e) => setRowData({ ...rowData, cpm: parseFloat(e.target.value) || 0 })}
-            />
-          ),
-          title: 'CPM ($)',
-          basis: 100,
+          field: 'cpm',
+          headerName: 'CPM ($)',
+          editable: true,
+          width: 100,
+          type: 'numericColumn',
+          valueFormatter: (params) => params.value ? `$${params.value.toFixed(2)}` : '',
         },
       ];
 
@@ -115,39 +99,26 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
           ],
           columns: [
             {
-              component: ({ rowData, setRowData }) => (
-                <input
-                  className="w-full p-1 border-0 bg-transparent outline-none"
-                  value={rowData.quarter || ''}
-                  onChange={(e) => setRowData({ ...rowData, quarter: e.target.value })}
-                />
-              ),
-              title: 'Quarter',
-              basis: 120,
+              field: 'quarter',
+              headerName: 'Quarter',
+              editable: true,
+              width: 120,
             },
             {
-              component: ({ rowData, setRowData }) => (
-                <input
-                  type="number"
-                  className="w-full p-1 border-0 bg-transparent outline-none text-right"
-                  value={rowData.total_budget || ''}
-                  onChange={(e) => setRowData({ ...rowData, total_budget: parseFloat(e.target.value) || 0 })}
-                />
-              ),
-              title: 'Total Budget ($)',
-              basis: 150,
+              field: 'total_budget',
+              headerName: 'Total Budget ($)',
+              editable: true,
+              width: 150,
+              type: 'numericColumn',
+              valueFormatter: (params) => params.value ? `$${params.value.toLocaleString()}` : '',
             },
             {
-              component: ({ rowData, setRowData }) => (
-                <input
-                  type="number"
-                  className="w-full p-1 border-0 bg-transparent outline-none text-right"
-                  value={rowData.total_reach || ''}
-                  onChange={(e) => setRowData({ ...rowData, total_reach: parseInt(e.target.value) || 0 })}
-                />
-              ),
-              title: 'Total Reach',
-              basis: 150,
+              field: 'total_reach',
+              headerName: 'Total Reach',
+              editable: true,
+              width: 150,
+              type: 'numericColumn',
+              valueFormatter: (params) => params.value ? params.value.toLocaleString() : '',
             },
           ],
         },
@@ -190,15 +161,10 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
       data: [{ id: '1' }],
       columns: [
         {
-          component: ({ rowData, setRowData }) => (
-            <input
-              className="w-full p-1 border-0 bg-transparent outline-none"
-              value={rowData.column1 || ''}
-              onChange={(e) => setRowData({ ...rowData, column1: e.target.value })}
-            />
-          ),
-          title: 'Column 1',
-          basis: 120,
+          field: 'column1',
+          headerName: 'Column 1',
+          editable: true,
+          width: 120,
         },
       ],
     };
@@ -211,16 +177,11 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
     
     const columnCount = currentSheet.columns.length;
     const newColumnKey = `column${columnCount + 1}`;
-    const newColumn: Column<RowData> = {
-      component: ({ rowData, setRowData }) => (
-        <input
-          className="w-full p-1 border-0 bg-transparent outline-none"
-          value={rowData[newColumnKey] || ''}
-          onChange={(e) => setRowData({ ...rowData, [newColumnKey]: e.target.value })}
-        />
-      ),
-      title: `Column ${columnCount + 1}`,
-      basis: 120,
+    const newColumn: ColDef = {
+      field: newColumnKey,
+      headerName: `Column ${columnCount + 1}`,
+      editable: true,
+      width: 120,
     };
 
     setSheets(prev => prev.map(sheet => 
@@ -275,16 +236,11 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
           const headers = jsonData[0] as string[];
           const rows = jsonData.slice(1) as any[][];
           
-          const columns: Column<RowData>[] = headers.map(header => ({
-            component: ({ rowData, setRowData }) => (
-              <input
-                className="w-full p-1 border-0 bg-transparent outline-none"
-                value={rowData[header] || ''}
-                onChange={(e) => setRowData({ ...rowData, [header]: e.target.value })}
-              />
-            ),
-            title: header,
-            basis: 120,
+          const columns: ColDef[] = headers.map(header => ({
+            field: header,
+            headerName: header,
+            editable: true,
+            width: 120,
           }));
           
           const data: RowData[] = rows.map((row, index) => {
@@ -374,16 +330,21 @@ export const EditModelDialog = ({ open, onOpenChange, model }: EditModelDialogPr
               
               {sheets.map((sheet) => (
                 <TabsContent key={sheet.name} value={sheet.name} className="flex-1 min-h-0 mt-4">
-                  <div className="flex-1 min-h-0 border rounded-md overflow-hidden bg-background">
-                    <DynamicDataSheetGrid
-                      value={sheet.data}
-                      onChange={updateSheetData}
-                      columns={sheet.columns}
-                      height={400}
-                      addRowsComponent={false}
-                      rowClassName={() => "hover:bg-muted/50"}
-                      headerRowHeight={40}
-                      rowHeight={36}
+                  <div className="ag-theme-alpine flex-1 min-h-0 border rounded-md overflow-hidden" style={{ height: 400 }}>
+                    <AgGridReact
+                      rowData={sheet.data}
+                      columnDefs={sheet.columns}
+                      onCellValueChanged={(params) => {
+                        const updatedData = [...sheet.data];
+                        const rowIndex = params.node.rowIndex!;
+                        updatedData[rowIndex] = params.data;
+                        updateSheetData(updatedData);
+                      }}
+                      defaultColDef={{
+                        resizable: true,
+                        sortable: true,
+                        filter: true,
+                      }}
                     />
                   </div>
                 </TabsContent>
