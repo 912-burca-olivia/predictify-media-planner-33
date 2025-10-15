@@ -73,38 +73,4 @@
   .editable-table-wrapper {
     @apply overflow-auto rounded-md border;
   }
-
-  /* ReactGrid Custom Styling */
-  .reactgrid {
-    @apply bg-background;
-    border: none !important;
-  }
-
-  .reactgrid .rg-cell {
-    @apply border-border;
-    border-width: 1px !important;
-  }
-
-  .reactgrid .rg-cell-header {
-    @apply bg-primary/10 font-semibold text-foreground;
-    border-bottom: 2px solid hsl(var(--primary)) !important;
-  }
-
-  .reactgrid .rg-cell:focus {
-    @apply ring-2 ring-primary ring-offset-0;
-    outline: none !important;
-  }
-
-  .reactgrid .rg-cell-focus {
-    @apply border-primary;
-    border-width: 2px !important;
-  }
-
-  .reactgrid .rg-fill-handle {
-    @apply bg-primary;
-  }
-
-  .reactgrid .rg-touch-resize-handle {
-    @apply bg-primary;
-  }
 }

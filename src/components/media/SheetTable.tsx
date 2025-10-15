@@ -1,4 +1,4 @@
-import { ReactGrid, Column, Row, CellChange, TextCell, NumberCell, MenuOption, Id } from '@silevis/reactgrid';
+import { ReactGrid, Column, Row, CellChange, TextCell, NumberCell, MenuOption, Id, CellStyle } from '@silevis/reactgrid';
 import '@silevis/reactgrid/styles.css';
 
 interface RowData {
@@ -21,9 +21,21 @@ export function SheetTable({ data, columnKeys, onCellsChanged, onAddRow, onDelet
     resizable: true,
   }));
 
+  const headerStyle: CellStyle = {
+    background: 'hsl(var(--primary) / 0.1)',
+    color: 'hsl(var(--foreground))',
+    border: {
+      bottom: { color: 'hsl(var(--primary))', width: '2px', style: 'solid' }
+    }
+  };
+
   const headerRow: Row = {
     rowId: 'header',
-    cells: columnKeys.map(key => ({ type: 'header', text: key })),
+    cells: columnKeys.map(key => ({ 
+      type: 'header', 
+      text: key,
+      style: headerStyle
+    })),
   };
 
   const rows: Row[] = data.map((rowData, idx) => ({
