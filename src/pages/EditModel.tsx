@@ -7,13 +7,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
   createColumnHelper,
   ColumnDef,
 } from '@tanstack/react-table';
 import * as XLSX from 'xlsx';
+import { SheetTable } from '@/components/media/SheetTable';
 
 interface RowData {
   id?: string;
@@ -416,47 +414,14 @@ export default function EditModel() {
                   </TabsList>
                 </div>
                 
-                {sheets.map((sheet) => {
-                  const table = useReactTable({
-                    data: sheet.data,
-                    columns: sheet.columns,
-                    getCoreRowModel: getCoreRowModel(),
-                  });
-
-                  return (
-                    <TabsContent key={sheet.name} value={sheet.name} className="space-y-4">
-                      <div className="border rounded-md overflow-auto" style={{ maxHeight: '600px' }}>
-                        <table className="w-full">
-                          <thead className="bg-muted sticky top-0">
-                            {table.getHeaderGroups().map(headerGroup => (
-                              <tr key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                  <th key={header.id} className="px-2 py-3 text-left text-sm font-medium border-b">
-                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                  </th>
-                                ))}
-                              </tr>
-                            ))}
-                          </thead>
-                          <tbody>
-                            {table.getRowModel().rows.map(row => (
-                              <tr key={row.id} className="border-b hover:bg-muted/50">
-                                {row.getVisibleCells().map(cell => (
-                                  <td key={cell.id} className="px-2 py-1">
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {sheet.data.length} rows • Edit cells directly
-                      </div>
-                    </TabsContent>
-                  );
-                })}
+                {sheets.map((sheet) => (
+                  <TabsContent key={sheet.name} value={sheet.name} className="space-y-4">
+                    <SheetTable data={sheet.data} columns={sheet.columns} />
+                    <div className="text-xs text-muted-foreground">
+                      {sheet.data.length} rows • Edit cells directly
+                    </div>
+                  </TabsContent>
+                ))}
               </Tabs>
             )}
           </CardContent>
