@@ -73,4 +73,35 @@
   .editable-table-wrapper {
     @apply overflow-auto rounded-md border;
   }
+
+  /* AG Grid Custom Styling */
+  .ag-theme-alpine {
+    --ag-background-color: hsl(var(--background));
+    --ag-foreground-color: hsl(var(--foreground));
+    --ag-border-color: hsl(var(--border));
+    --ag-header-background-color: hsl(var(--primary) / 0.1);
+    --ag-header-foreground-color: hsl(var(--foreground));
+    --ag-odd-row-background-color: hsl(var(--background));
+    --ag-header-column-resize-handle-color: hsl(var(--primary));
+    --ag-selected-row-background-color: hsl(var(--primary) / 0.1);
+    --ag-row-hover-color: hsl(var(--muted));
+    --ag-cell-horizontal-border: solid hsl(var(--border));
+    --ag-range-selection-border-color: hsl(var(--primary));
+    --ag-range-selection-background-color: hsl(var(--primary) / 0.2);
+    font-family: inherit;
+  }
+
+  .ag-theme-alpine .ag-header {
+    border-bottom: 2px solid hsl(var(--primary));
+    font-weight: 600;
+  }
+
+  .ag-theme-alpine .ag-cell-focus {
+    border: 2px solid hsl(var(--primary)) !important;
+    outline: none;
+  }
+
+  .ag-theme-alpine .ag-ltr .ag-cell-focus {
+    border: 2px solid hsl(var(--primary)) !important;
+  }
 }

@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import * as XLSX from 'xlsx';
 import { SheetTable } from '@/components/media/SheetTable';
-import { CellChange, Id } from '@silevis/reactgrid';
 
 interface RowData {
   id?: string;
@@ -97,7 +96,7 @@ export default function EditModel() {
 
   const currentSheet = sheets.find(sheet => sheet.name === activeSheet);
 
-  const handleCellsChanged = (changes: CellChange[]) => {
+  const handleCellsChanged = (changes: any[]) => {
     setSheets(prev => prev.map(sheet => {
       if (sheet.name !== activeSheet) return sheet;
       
@@ -159,7 +158,7 @@ export default function EditModel() {
     ));
   };
 
-  const handleDeleteRow = (rowId: Id) => {
+  const handleDeleteRow = (rowId: string | number) => {
     setSheets(prev => prev.map(sheet => 
       sheet.name === activeSheet 
         ? { ...sheet, data: sheet.data.filter(row => row.id !== rowId) }

@@ -1,9 +1,18 @@
-import { ReactGrid, Column, Row, CellChange, TextCell, NumberCell, MenuOption, Id, CellStyle } from '@silevis/reactgrid';
-import '@silevis/reactgrid/styles.css';
+import { useRef, useMemo, useCallback } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import { ColDef, CellValueChangedEvent, GetContextMenuItemsParams, MenuItemDef } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 interface RowData {
   id?: string;
   [key: string]: any;
+}
+
+interface CellChange {
+  rowId: string | number;
+  columnId: string;
+  newCell: { type: string; value?: number; text?: string };
 }
 
 interface SheetTableProps {
@@ -11,85 +20,92 @@ interface SheetTableProps {
   columnKeys: string[];
   onCellsChanged: (changes: CellChange[]) => void;
   onAddRow: () => void;
-  onDeleteRow: (rowId: Id) => void;
+  onDeleteRow: (rowId: string | number) => void;
 }
 
 export function SheetTable({ data, columnKeys, onCellsChanged, onAddRow, onDeleteRow }: SheetTableProps) {
-  const columns: Column[] = columnKeys.map(key => ({
-    columnId: key,
-    width: 150,
-    resizable: true,
-  }));
+  const gridRef = useRef<AgGridReact>(null);
 
-  const headerStyle: CellStyle = {
-    background: 'hsl(var(--primary) / 0.1)',
-    color: 'hsl(var(--foreground))',
-    border: {
-      bottom: { color: 'hsl(var(--primary))', width: '2px', style: 'solid' }
-    }
-  };
-
-  const headerRow: Row = {
-    rowId: 'header',
-    cells: columnKeys.map(key => ({ 
-      type: 'header', 
-      text: key,
-      style: headerStyle
+  const columnDefs: ColDef[] = useMemo(() => 
+    columnKeys.map(key => ({
+      field: key,
+      headerName: key,
+      editable: true,
+      resizable: true,
+      width: 150,
+      valueParser: (params: any) => {
+        const value = params.newValue;
+        // Try to parse as number
+        const num = Number(value);
+        return !isNaN(num) && value !== '' ? num : value;
+      },
     })),
-  };
+    [columnKeys]
+  );
 
-  const rows: Row[] = data.map((rowData, idx) => ({
-    rowId: rowData.id || idx,
-    cells: columnKeys.map(key => {
-      const value = rowData[key];
-      if (typeof value === 'number') {
-        return { type: 'number', value } as NumberCell;
-      }
-      return { type: 'text', text: String(value || '') } as TextCell;
-    }),
-  }));
+  const rowData = useMemo(() => 
+    data.map((row, idx) => ({
+      ...row,
+      id: row.id || idx,
+    })),
+    [data]
+  );
 
-  const getRows = () => [headerRow, ...rows];
+  const onCellValueChanged = useCallback((event: CellValueChangedEvent) => {
+    const rowId = event.data.id;
+    const columnId = event.colDef.field!;
+    const newValue = event.newValue;
+    
+    const change: CellChange = {
+      rowId,
+      columnId,
+      newCell: typeof newValue === 'number' 
+        ? { type: 'number', value: newValue }
+        : { type: 'text', text: String(newValue || '') }
+    };
+    
+    onCellsChanged([change]);
+  }, [onCellsChanged]);
 
-  const handleContextMenu = (
-    selectedRowIds: Id[],
-    selectedColIds: Id[],
-    selectionMode: string,
-    menuOptions: MenuOption[]
-  ): MenuOption[] => {
-    if (selectedRowIds.length > 0 && selectedRowIds[0] !== 'header') {
-      return [
-        ...menuOptions,
-        {
-          id: 'addRowBelow',
-          label: 'Add row below',
-          handler: () => onAddRow(),
+  const getContextMenuItems = useCallback((params: GetContextMenuItemsParams): (MenuItemDef)[] => {
+    const result: MenuItemDef[] = [
+      {
+        name: 'Add Row Below',
+        action: () => onAddRow(),
+        icon: '<span class="ag-icon ag-icon-plus"></span>',
+      },
+    ];
+
+    if (params.node) {
+      result.push({
+        name: 'Delete Row',
+        action: () => {
+          const rowId = params.node!.data.id;
+          onDeleteRow(rowId);
         },
-        {
-          id: 'deleteRow',
-          label: 'Delete row',
-          handler: () => {
-            selectedRowIds.forEach(id => onDeleteRow(id));
-          },
-        },
-      ];
+        icon: '<span class="ag-icon ag-icon-cross"></span>',
+      });
     }
-    return menuOptions;
-  };
+
+    return result;
+  }, [onAddRow, onDeleteRow]);
 
   return (
     <div className="rounded-lg border border-border overflow-hidden shadow-sm" style={{ height: '600px' }}>
-      <ReactGrid
-        rows={getRows()}
-        columns={columns}
-        onCellsChanged={onCellsChanged}
-        enableRangeSelection
-        enableFillHandle
-        enableRowSelection
-        enableColumnSelection
-        stickyTopRows={1}
-        onContextMenu={handleContextMenu}
-      />
+      <div className="ag-theme-alpine" style={{ height: '100%', width: '100%' }}>
+        <AgGridReact
+          ref={gridRef}
+          columnDefs={columnDefs}
+          rowData={rowData}
+          onCellValueChanged={onCellValueChanged}
+          getContextMenuItems={getContextMenuItems}
+          enableRangeSelection={true}
+          enableFillHandle={true}
+          rowSelection="multiple"
+          suppressRowClickSelection={true}
+          getRowId={(params) => String(params.data.id)}
+        />
+      </div>
     </div>
   );
 }
