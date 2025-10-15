@@ -66,7 +66,7 @@ export function SheetTable({ data, columnKeys, onCellsChanged, onAddRow, onDelet
   };
 
   return (
-    <div className="border rounded-md" style={{ height: '600px' }}>
+    <div className="rounded-lg border border-border overflow-hidden shadow-sm" style={{ height: '600px' }}>
       <ReactGrid
         rows={getRows()}
         columns={columns}
