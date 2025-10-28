@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Save, RefreshCw } from 'lucide-react';
+import { Save, RefreshCw, Percent, TrendingUp, TrendingDown } from 'lucide-react';
 import { useMediaPlan } from '@/contexts/MediaPlanContext';
 import { toast } from 'sonner';
 
@@ -14,6 +14,8 @@ const AdvancedSettingsTables = () => {
   const { channels, setChannels, months, cellData, setCellData } = useMediaPlan();
   const [localCellData, setLocalCellData] = useState([...cellData]);
   const [localChannels, setLocalChannels] = useState([...channels]);
+  const [bulkPricePercent, setBulkPricePercent] = useState<string>('');
+  const [channelPricePercents, setChannelPricePercents] = useState<Record<string, string>>({});
 
   // Update local cell data when context data changes
   useEffect(() => {
@@ -98,6 +100,43 @@ const AdvancedSettingsTables = () => {
     return cell ? cell[property] : null;
   };
 
+  const applyBulkPriceChange = () => {
+    const percent = parseFloat(bulkPricePercent);
+    if (isNaN(percent)) {
+      toast.error('Please enter a valid percentage');
+      return;
+    }
+
+    setLocalCellData(prevData =>
+      prevData.map(cell => ({
+        ...cell,
+        priceIndex: Math.round(cell.priceIndex * (1 + percent / 100))
+      }))
+    );
+    
+    setBulkPricePercent('');
+    toast.success(`Applied ${percent > 0 ? '+' : ''}${percent}% to all cells`);
+  };
+
+  const applyChannelPriceChange = (channelId: string) => {
+    const percent = parseFloat(channelPricePercents[channelId] || '');
+    if (isNaN(percent)) {
+      toast.error('Please enter a valid percentage');
+      return;
+    }
+
+    setLocalCellData(prevData =>
+      prevData.map(cell =>
+        cell.channelId === channelId
+          ? { ...cell, priceIndex: Math.round(cell.priceIndex * (1 + percent / 100)) }
+          : cell
+      )
+    );
+
+    setChannelPricePercents(prev => ({ ...prev, [channelId]: '' }));
+    toast.success(`Applied ${percent > 0 ? '+' : ''}${percent}% to ${channels.find(c => c.id === channelId)?.name}`);
+  };
+
   return (
     <Card className="mt-6">
       <CardHeader className="pb-3">
@@ -173,6 +212,29 @@ const AdvancedSettingsTables = () => {
           
           {/* Price Index Table */}
           <TabsContent value="price" className="space-y-4">
+            <div className="rounded-lg border border-border bg-card p-4 mb-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 flex-1">
+                  <Percent className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Adjust All Cells:</span>
+                  <Input
+                    type="number"
+                    placeholder="+/- %"
+                    value={bulkPricePercent}
+                    onChange={(e) => setBulkPricePercent(e.target.value)}
+                    className="h-9 w-24"
+                  />
+                  <Button 
+                    size="sm" 
+                    onClick={applyBulkPriceChange}
+                    variant="secondary"
+                  >
+                    Apply
+                  </Button>
+                </div>
+              </div>
+            </div>
+
             <div className="editable-table-wrapper">
               <table className="w-full border-collapse">
                 <thead>
@@ -187,25 +249,49 @@ const AdvancedSettingsTables = () => {
                 </thead>
                 <tbody>
                   {channels.map(channel => (
-                    <tr key={channel.id}>
-                      <td className="table-header sticky left-0 z-10 bg-card">
-                        {channel.name}
-                      </td>
-                      {months.map(month => (
-                        <td 
-                          key={`${channel.id}-${month.id}`}
-                          className="data-cell"
-                        >
-                          <Input
-                            type="number"
-                            min="1"
-                            value={String(getCellValue(channel.id, month.id, 'priceIndex'))}
-                            onChange={(e) => handlePriceIndexChange(channel.id, month.id, e.target.value)}
-                            className="h-8 w-full text-center"
-                          />
+                    <>
+                      <tr key={channel.id}>
+                        <td className="table-header sticky left-0 z-10 bg-card">
+                          <div className="flex flex-col gap-2">
+                            <span>{channel.name}</span>
+                            <div className="flex items-center gap-1">
+                              <Input
+                                type="number"
+                                placeholder="+/- %"
+                                value={channelPricePercents[channel.id] || ''}
+                                onChange={(e) => setChannelPricePercents(prev => ({
+                                  ...prev,
+                                  [channel.id]: e.target.value
+                                }))}
+                                className="h-7 w-20 text-xs"
+                              />
+                              <Button 
+                                size="sm" 
+                                onClick={() => applyChannelPriceChange(channel.id)}
+                                variant="ghost"
+                                className="h-7 px-2"
+                              >
+                                <Percent className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
                         </td>
-                      ))}
-                    </tr>
+                        {months.map(month => (
+                          <td 
+                            key={`${channel.id}-${month.id}`}
+                            className="data-cell"
+                          >
+                            <Input
+                              type="number"
+                              min="1"
+                              value={String(getCellValue(channel.id, month.id, 'priceIndex'))}
+                              onChange={(e) => handlePriceIndexChange(channel.id, month.id, e.target.value)}
+                              className="h-8 w-full text-center"
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    </>
                   ))}
                 </tbody>
               </table>
