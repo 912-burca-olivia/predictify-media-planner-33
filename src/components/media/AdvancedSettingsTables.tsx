@@ -218,12 +218,17 @@ const AdvancedSettingsTables = () => {
                   <Percent className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Adjust All Cells:</span>
                   <div className="relative">
+                    {parseFloat(bulkPricePercent) > 0 && (
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+                        +
+                      </span>
+                    )}
                     <Input
                       type="number"
                       placeholder="0"
                       value={bulkPricePercent}
                       onChange={(e) => setBulkPricePercent(e.target.value)}
-                      className="h-9 w-24 pr-6"
+                      className="h-9 w-24 pr-6 pl-6"
                       step="1"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
@@ -262,6 +267,11 @@ const AdvancedSettingsTables = () => {
                             <span>{channel.name}</span>
                             <div className="flex items-center gap-1">
                               <div className="relative">
+                                {parseFloat(channelPricePercents[channel.id] || '') > 0 && (
+                                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                                    +
+                                  </span>
+                                )}
                                 <Input
                                   type="number"
                                   placeholder="0"
@@ -272,7 +282,7 @@ const AdvancedSettingsTables = () => {
                                       [channel.id]: e.target.value
                                     }));
                                   }}
-                                  className="h-7 w-20 text-xs pr-6"
+                                  className="h-7 w-20 text-xs pr-6 pl-6"
                                   step="1"
                                 />
                                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
