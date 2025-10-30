@@ -100,20 +100,9 @@ const AdvancedSettingsTables = () => {
     return cell ? cell[property] : null;
   };
 
-  const formatPercentInput = (value: string) => {
-    if (!value) return '';
-    const num = parseFloat(value);
-    if (isNaN(num)) return value;
-    return `${num > 0 ? '+' : ''}${num}%`;
-  };
-
-  const parsePercentInput = (value: string) => {
-    return value.replace(/[+%]/g, '');
-  };
-
   const applyBulkPriceChange = () => {
-    const percent = parseFloat(parsePercentInput(bulkPricePercent));
-    if (isNaN(percent)) {
+    const percent = parseFloat(bulkPricePercent);
+    if (isNaN(percent) || !bulkPricePercent) {
       toast.error('Please enter a valid percentage');
       return;
     }
@@ -130,8 +119,8 @@ const AdvancedSettingsTables = () => {
   };
 
   const applyChannelPriceChange = (channelId: string) => {
-    const percent = parseFloat(parsePercentInput(channelPricePercents[channelId] || ''));
-    if (isNaN(percent)) {
+    const percent = parseFloat(channelPricePercents[channelId] || '');
+    if (isNaN(percent) || !channelPricePercents[channelId]) {
       toast.error('Please enter a valid percentage');
       return;
     }
@@ -228,24 +217,19 @@ const AdvancedSettingsTables = () => {
                 <div className="flex items-center gap-2 flex-1">
                   <Percent className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Adjust All Cells:</span>
-                  <Input
-                    type="text"
-                    placeholder="+/- %"
-                    value={bulkPricePercent}
-                    onChange={(e) => {
-                      const raw = parsePercentInput(e.target.value);
-                      setBulkPricePercent(raw);
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value) {
-                        setBulkPricePercent(formatPercentInput(e.target.value));
-                      }
-                    }}
-                    onFocus={(e) => {
-                      setBulkPricePercent(parsePercentInput(e.target.value));
-                    }}
-                    className="h-9 w-24"
-                  />
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={bulkPricePercent}
+                      onChange={(e) => setBulkPricePercent(e.target.value)}
+                      className="h-9 w-24 pr-6"
+                      step="1"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+                      %
+                    </span>
+                  </div>
                   <Button 
                     size="sm" 
                     onClick={applyBulkPriceChange}
@@ -277,34 +261,24 @@ const AdvancedSettingsTables = () => {
                           <div className="flex flex-col gap-2">
                             <span>{channel.name}</span>
                             <div className="flex items-center gap-1">
-                              <Input
-                                type="text"
-                                placeholder="+/- %"
-                                value={channelPricePercents[channel.id] || ''}
-                                onChange={(e) => {
-                                  const raw = parsePercentInput(e.target.value);
-                                  setChannelPricePercents(prev => ({
-                                    ...prev,
-                                    [channel.id]: raw
-                                  }));
-                                }}
-                                onBlur={(e) => {
-                                  if (e.target.value) {
+                              <div className="relative">
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  value={channelPricePercents[channel.id] || ''}
+                                  onChange={(e) => {
                                     setChannelPricePercents(prev => ({
                                       ...prev,
-                                      [channel.id]: formatPercentInput(e.target.value)
+                                      [channel.id]: e.target.value
                                     }));
-                                  }
-                                }}
-                                onFocus={(e) => {
-                                  const currentValue = channelPricePercents[channel.id] || '';
-                                  setChannelPricePercents(prev => ({
-                                    ...prev,
-                                    [channel.id]: parsePercentInput(currentValue)
-                                  }));
-                                }}
-                                className="h-7 w-20 text-xs"
-                              />
+                                  }}
+                                  className="h-7 w-20 text-xs pr-6"
+                                  step="1"
+                                />
+                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                                  %
+                                </span>
+                              </div>
                               <Button 
                                 size="sm" 
                                 onClick={() => applyChannelPriceChange(channel.id)}
