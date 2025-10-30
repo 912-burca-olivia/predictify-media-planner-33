@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Save, RefreshCw, Percent, TrendingUp, TrendingDown } from 'lucide-react';
+import { Save, RefreshCw, Percent, TrendingUp, TrendingDown, Check } from 'lucide-react';
 import { useMediaPlan } from '@/contexts/MediaPlanContext';
 import { toast } from 'sonner';
 
@@ -100,8 +100,19 @@ const AdvancedSettingsTables = () => {
     return cell ? cell[property] : null;
   };
 
+  const formatPercentInput = (value: string) => {
+    if (!value) return '';
+    const num = parseFloat(value);
+    if (isNaN(num)) return value;
+    return `${num > 0 ? '+' : ''}${num}%`;
+  };
+
+  const parsePercentInput = (value: string) => {
+    return value.replace(/[+%]/g, '');
+  };
+
   const applyBulkPriceChange = () => {
-    const percent = parseFloat(bulkPricePercent);
+    const percent = parseFloat(parsePercentInput(bulkPricePercent));
     if (isNaN(percent)) {
       toast.error('Please enter a valid percentage');
       return;
@@ -119,7 +130,7 @@ const AdvancedSettingsTables = () => {
   };
 
   const applyChannelPriceChange = (channelId: string) => {
-    const percent = parseFloat(channelPricePercents[channelId] || '');
+    const percent = parseFloat(parsePercentInput(channelPricePercents[channelId] || ''));
     if (isNaN(percent)) {
       toast.error('Please enter a valid percentage');
       return;
@@ -218,10 +229,21 @@ const AdvancedSettingsTables = () => {
                   <Percent className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Adjust All Cells:</span>
                   <Input
-                    type="number"
+                    type="text"
                     placeholder="+/- %"
                     value={bulkPricePercent}
-                    onChange={(e) => setBulkPricePercent(e.target.value)}
+                    onChange={(e) => {
+                      const raw = parsePercentInput(e.target.value);
+                      setBulkPricePercent(raw);
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value) {
+                        setBulkPricePercent(formatPercentInput(e.target.value));
+                      }
+                    }}
+                    onFocus={(e) => {
+                      setBulkPricePercent(parsePercentInput(e.target.value));
+                    }}
                     className="h-9 w-24"
                   />
                   <Button 
@@ -256,13 +278,31 @@ const AdvancedSettingsTables = () => {
                             <span>{channel.name}</span>
                             <div className="flex items-center gap-1">
                               <Input
-                                type="number"
+                                type="text"
                                 placeholder="+/- %"
                                 value={channelPricePercents[channel.id] || ''}
-                                onChange={(e) => setChannelPricePercents(prev => ({
-                                  ...prev,
-                                  [channel.id]: e.target.value
-                                }))}
+                                onChange={(e) => {
+                                  const raw = parsePercentInput(e.target.value);
+                                  setChannelPricePercents(prev => ({
+                                    ...prev,
+                                    [channel.id]: raw
+                                  }));
+                                }}
+                                onBlur={(e) => {
+                                  if (e.target.value) {
+                                    setChannelPricePercents(prev => ({
+                                      ...prev,
+                                      [channel.id]: formatPercentInput(e.target.value)
+                                    }));
+                                  }
+                                }}
+                                onFocus={(e) => {
+                                  const currentValue = channelPricePercents[channel.id] || '';
+                                  setChannelPricePercents(prev => ({
+                                    ...prev,
+                                    [channel.id]: parsePercentInput(currentValue)
+                                  }));
+                                }}
                                 className="h-7 w-20 text-xs"
                               />
                               <Button 
@@ -271,7 +311,7 @@ const AdvancedSettingsTables = () => {
                                 variant="ghost"
                                 className="h-7 px-2"
                               >
-                                <Percent className="h-3 w-3" />
+                                <Check className="h-3 w-3" />
                               </Button>
                             </div>
                           </div>
